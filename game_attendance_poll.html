@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Game Day Poll</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&display=swap');
+
+  :root {
+    --grass: #2d6a1f;
+    --grass-dark: #1a4010;
+    --pitch: #e8f5e1;
+    --accent: #f5a623;
+    --accent-dark: #c07d0a;
+    --text: #1a1a1a;
+    --text-muted: #5a6672;
+    --card-bg: #ffffff;
+    --border: rgba(0,0,0,0.10);
+    --radius: 12px;
+    --out-red: #c0392b;
+    --out-bg: #fde8e8;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', system-ui, sans-serif;
+    background: var(--pitch);
+    color: var(--text);
+    min-height: 100vh;
+    background-image:
+      repeating-linear-gradient(0deg, rgba(255,255,255,0.18) 0px, rgba(255,255,255,0.18) 40px, transparent 40px, transparent 80px),
+      repeating-linear-gradient(90deg, rgba(255,255,255,0.18) 0px, rgba(255,255,255,0.18) 40px, transparent 40px, transparent 80px);
+  }
+
+  header {
+    background: var(--grass-dark);
+    color: #fff;
+    padding: 1.25rem 1.5rem 1rem;
+    display: flex;
+    align-items: flex-end;
+    gap: 1rem;
+    position: relative;
+    overflow: hidden;
+    border-bottom: 4px solid var(--accent);
+    flex-wrap: wrap;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(90deg, rgba(255,255,255,0.04) 0 2px, transparent 2px 60px);
+  }
+  header h1 { font-family: 'Bebas Neue', sans-serif; font-size: 2.8rem; letter-spacing: 2px; line-height: 1; z-index: 1; }
+  header p { font-size: 0.82rem; opacity: 0.7; z-index: 1; padding-bottom: 4px; }
+
+  .container { max-width: 1100px; margin: 0 auto; padding: 1.5rem 1rem; }
+
+  /* ── TOP CARD: name + DONE ── */
+  .player-select-card {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    padding: 1.1rem 1.25rem;
+    margin-bottom: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+  .player-select-card label { font-weight: 600; font-size: 0.95rem; white-space: nowrap; flex-shrink: 0; }
+  .player-select-card select {
+    flex: 1;
+    min-width: 150px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem;
+    padding: 0.65rem 0.85rem;
+    border: 1.5px solid #ccc;
+    border-radius: 8px;
+    background: #fafafa;
+    cursor: pointer;
+    outline: none;
+    transition: border-color .2s;
+    -webkit-appearance: auto;
+    touch-action: manipulation;
+  }
+  .player-select-card select:focus { border-color: var(--grass); }
+
+  .btn-done {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.35rem;
+    letter-spacing: 2px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 0.65rem 1.75rem;
+    cursor: pointer;
+    transition: background .2s, transform .1s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    white-space: nowrap;
+    flex-shrink: 0;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .btn-done:hover { background: var(--accent-dark); }
+  .btn-done:active { transform: scale(0.96); }
+  .btn-done:disabled { background: #ccc; cursor: default; box-shadow: none; }
+
+  .legend { font-size: 0.78rem; color: var(--text-muted); margin-bottom: 1rem; }
+
+  /* ── SUMMARY ── */
+  .summary-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 1.1rem; }
+  .stat-pill {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 40px;
+    padding: 0.3rem 0.9rem;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .stat-pill strong { color: var(--grass-dark); }
+
+  /* ── TABLE ── */
+  .grid-card {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin-bottom: 2rem;
+  }
+  table { width: 100%; border-collapse: collapse; min-width: 420px; }
+  thead tr { background: var(--grass-dark); color: #fff; }
+  thead th {
+    padding: 0.8rem 0.6rem;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 0.92rem;
+    letter-spacing: 1px;
+    text-align: left;
+    white-space: nowrap;
+  }
+  thead th:not(:first-child) { text-align: center; font-size: 0.78rem; letter-spacing: 0.5px; }
+  tbody tr { border-bottom: 1px solid #eee; transition: background .15s; }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: #f5faf2; }
+  tbody td { padding: 0.6rem 0.6rem; font-size: 0.88rem; vertical-align: middle; }
+  td.player-name { font-weight: 600; white-space: nowrap; max-width: 130px; }
+  td.player-name.is-you { color: var(--grass); }
+  td.date-cell { text-align: center; }
+
+  .avail-select {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem;
+    padding: 0.38rem 0.25rem;
+    border: 1.5px solid #ccc;
+    border-radius: 8px;
+    background: #fff;
+    cursor: pointer;
+    width: 78px;
+    outline: none;
+    transition: border-color .2s, background .2s, color .2s;
+    text-align: center;
+    touch-action: manipulation;
+    -webkit-appearance: auto;
+  }
+  .avail-select:focus { border-color: var(--grass); }
+  .avail-select.val-out { background: var(--out-bg); border-color: var(--out-red); color: var(--out-red); font-weight: 600; }
+  .avail-select.val-num { background: #edfbe4; border-color: var(--grass); color: var(--grass-dark); font-weight: 600; }
+  .avail-select:disabled { background: #f0f0f0; border-color: #ddd; color: #aaa; cursor: default; }
+
+  .badge { display: inline-block; border-radius: 20px; padding: 2px 8px; font-size: 0.73rem; font-weight: 600; white-space: nowrap; }
+  .badge-out { background: var(--out-bg); color: var(--out-red); }
+  .badge-num { background: #edfbe4; color: var(--grass-dark); }
+  .badge-empty { color: #bbb; font-size: 0.78rem; }
+
+  tr.totals-row { background: #f0f8eb; }
+  tr.totals-row td { font-weight: 600; font-size: 0.82rem; color: var(--grass-dark); text-align: center; }
+  tr.totals-row td:first-child { text-align: left; }
+  .total-pill { display: inline-block; background: var(--grass); color: #fff; border-radius: 20px; padding: 2px 9px; font-size: 0.82rem; }
+
+  /* ── TOAST ── */
+  #toast {
+    display: none;
+    position: fixed;
+    bottom: 1.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--grass-dark);
+    color: #fff;
+    padding: 0.9rem 1.5rem;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+    z-index: 999;
+    width: 88vw;
+    max-width: 400px;
+    text-align: center;
+    animation: slideUp .3s ease;
+    line-height: 1.4;
+  }
+  #toast.out-toast { background: var(--out-red); }
+  @keyframes slideUp { from { opacity:0; transform: translateX(-50%) translateY(16px); } to { opacity:1; transform: translateX(-50%) translateY(0); } }
+
+  /* ── MOBILE ── */
+  @media (max-width: 480px) {
+    header { padding: 0.9rem 0.9rem 0.7rem; }
+    header h1 { font-size: 1.9rem; }
+    header p { font-size: 0.72rem; }
+    .container { padding: 0.7rem 0.5rem; }
+    .player-select-card { padding: 0.85rem; gap: 0.55rem; }
+    .player-select-card label { font-size: 0.85rem; }
+    .player-select-card select { font-size: 0.9rem; padding: 0.55rem 0.6rem; }
+    .btn-done { font-size: 1.1rem; padding: 0.55rem 1.1rem; letter-spacing: 1.5px; }
+    table { min-width: 340px; }
+    thead th { font-size: 0.74rem; padding: 0.6rem 0.4rem; }
+    tbody td { padding: 0.5rem 0.4rem; font-size: 0.78rem; }
+    td.player-name { max-width: 85px; font-size: 0.76rem; }
+    .avail-select { width: 65px; font-size: 0.72rem; padding: 0.3rem 0.15rem; }
+    .badge { font-size: 0.65rem; padding: 2px 5px; }
+    .stat-pill { font-size: 0.7rem; padding: 0.25rem 0.65rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div><h1>⚽ Game Day Poll</h1></div>
+  <p id="header-sub">Loading dates…</p>
+</header>
+
+<div class="container">
+
+  <div class="player-select-card">
+    <label for="playerPicker">Who are you?</label>
+    <select id="playerPicker">
+      <option value="">— select your name —</option>
+    </select>
+    <button class="btn-done" id="doneBtn" disabled>DONE</button>
+  </div>
+
+  <p class="legend">For each week: pick how many players you're bringing (including yourself), or OUT if you can't come.</p>
+
+  <div class="summary-bar" id="summaryBar"></div>
+
+  <div class="grid-card">
+    <table id="pollTable">
+      <thead><tr id="headerRow"></tr></thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+  </div>
+
+</div>
+
+<div id="toast"></div>
+
+<script>
+/* ══ GOOGLE SHEETS URL ══ */
+const SHEETS_URL = "https://script.google.com/macros/s/AKfycbyDU3O6gydWsDEMbLVeY524Zryv7zu8MJpS-GQR_Ts6nOS20XZ67TPYl2D0aWHZ9KyBnw/exec";
+
+/* ══ CONFIGURATION ══ */
+const CONFIG = {
+  GAME_DAY: 6,      // 0=Sunday  6=Saturday
+  EXTRA_WEEKS: 5,
+  PARTICIPANTS: [
+    "Alex Martin","Bella Torres","Carlos Diaz","Diana Chen","Ethan Brown",
+    "Fatima Hassan","Giorgio Rossi","Hannah Kim","Ivan Petrov","Julia Santos",
+    "Kevin O'Brien","Layla Ahmed","Marco Bianchi","Nina Volkov","Oscar Reyes",
+    "Priya Nair","Quinn Walker","Rita Mendes","Sam Nakamura","Tanya Dupont",
+  ].slice(0,20),
+};
+
+/* ══ STORAGE ══ */
+const STORAGE_KEY = "game_attendance_poll_v1";
+function loadData(){ try{ return JSON.parse(localStorage.getItem(STORAGE_KEY))||{}; }catch(e){ return {}; } }
+function saveData(d){ localStorage.setItem(STORAGE_KEY, JSON.stringify(d)); }
+
+/* ══ DATE HELPERS ══ */
+function nextGameDay(from, dow){ const d=new Date(from); d.setHours(0,0,0,0); const diff=(dow-d.getDay()+7)%7||7; d.setDate(d.getDate()+diff); return d; }
+function addWeeks(d,n){ const r=new Date(d); r.setDate(r.getDate()+n*7); return r; }
+function fmtDate(d){ return d.toLocaleDateString('en-GB',{day:'2-digit',month:'short'}); }
+function dateKey(d){ return d.toISOString().slice(0,10); }
+function dayLabel(dow){ return ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][dow]; }
+
+const today = new Date();
+const firstGame = nextGameDay(today, CONFIG.GAME_DAY);
+const dates = [firstGame, ...Array.from({length:CONFIG.EXTRA_WEEKS},(_,i)=>addWeeks(firstGame,i+1))];
+
+/* ══ DOM ══ */
+const playerPicker = document.getElementById('playerPicker');
+const headerRow    = document.getElementById('headerRow');
+const tableBody    = document.getElementById('tableBody');
+const doneBtn      = document.getElementById('doneBtn');
+const summaryBar   = document.getElementById('summaryBar');
+const toast        = document.getElementById('toast');
+
+document.getElementById('header-sub').textContent =
+  `Next: ${dayLabel(CONFIG.GAME_DAY)} ${fmtDate(firstGame)} · ${dates.length} dates`;
+
+CONFIG.PARTICIPANTS.forEach(name => {
+  const o = document.createElement('option');
+  o.value = name; o.textContent = name;
+  playerPicker.appendChild(o);
+});
+
+/* ══ BUILD HEADER ══ */
+function buildHeader(){
+  headerRow.innerHTML='';
+  const th0=document.createElement('th'); th0.textContent='Player'; th0.style.minWidth='95px'; headerRow.appendChild(th0);
+  dates.forEach(d=>{
+    const th=document.createElement('th');
+    th.innerHTML=`${dayLabel(d.getDay())}<br><span style="font-weight:400;opacity:.8">${fmtDate(d)}</span>`;
+    th.style.minWidth='74px'; headerRow.appendChild(th);
+  });
+}
+
+/* ══ OPTIONS ══ */
+function buildOptions(cur){
+  return [{v:'',l:'—'},{v:'OUT',l:'OUT'},{v:'1',l:'+1 (me)'},{v:'2',l:'+2'},{v:'3',l:'+3'},{v:'4',l:'+4'},{v:'5',l:'+5'}]
+    .map(o=>`<option value="${o.v}"${o.v===cur?' selected':''}>${o.l}</option>`).join('');
+}
+function renderBadge(val){
+  if(!val) return `<span class="badge badge-empty">—</span>`;
+  if(val==='OUT') return `<span class="badge badge-out">OUT</span>`;
+  return `<span class="badge badge-num">+${val}</span>`;
+}
+
+/* ══ BUILD BODY ══ */
+function buildBody(){
+  const data=loadData(); const me=playerPicker.value; tableBody.innerHTML='';
+  CONFIG.PARTICIPANTS.forEach(name=>{
+    const tr=document.createElement('tr');
+    const tdN=document.createElement('td');
+    tdN.className='player-name'+(name===me?' is-you':'');
+    tdN.textContent=name+(name===me?' (you)':'');
+    tr.appendChild(tdN);
+    dates.forEach(d=>{
+      const dk=dateKey(d); const val=(data[name]||{})[dk]||'';
+      const td=document.createElement('td'); td.className='date-cell';
+      if(name===me){
+        const sel=document.createElement('select');
+        sel.className='avail-select'; sel.innerHTML=buildOptions(val);
+        sel.dataset.player=name; sel.dataset.date=dk;
+        applySelStyle(sel,val); sel.addEventListener('change',onSelChange);
+        td.appendChild(sel);
+      } else { td.innerHTML=renderBadge(val); }
+      tr.appendChild(td);
+    });
+    tableBody.appendChild(tr);
+  });
+  // totals
+  const totTr=document.createElement('tr'); totTr.className='totals-row';
+  const tdL=document.createElement('td'); tdL.textContent='Total in'; totTr.appendChild(tdL);
+  dates.forEach(d=>{
+    const dk=dateKey(d); let t=0;
+    CONFIG.PARTICIPANTS.forEach(n=>{ const v=(data[n]||{})[dk]; if(v&&v!=='OUT') t+=parseInt(v,10); });
+    const td=document.createElement('td');
+    td.innerHTML=t>0?`<span class="total-pill">${t}</span>`:`<span style="color:#bbb">0</span>`;
+    totTr.appendChild(td);
+  });
+  tableBody.appendChild(totTr);
+  buildSummary(data);
+}
+
+function applySelStyle(sel,val){
+  sel.className='avail-select';
+  if(val==='OUT') sel.classList.add('val-out');
+  else if(val) sel.classList.add('val-num');
+}
+
+function onSelChange(e){
+  const sel=e.target; const {player,date}=sel.dataset; const val=sel.value;
+  applySelStyle(sel,val);
+  const data=loadData(); if(!data[player]) data[player]={};
+  data[player][date]=val; saveData(data); buildBody();
+}
+
+/* ══ SUMMARY — no participant count ══ */
+function buildSummary(data){
+  const responded=CONFIG.PARTICIPANTS.filter(n=>dates.some(d=>(data[n]||{})[dateKey(d)]));
+  const dk=dateKey(dates[0]); let totalIn=0;
+  CONFIG.PARTICIPANTS.forEach(n=>{ const v=(data[n]||{})[dk]; if(v&&v!=='OUT') totalIn+=parseInt(v,10); });
+  summaryBar.innerHTML=`
+    <div class="stat-pill">Responded: <strong>${responded.length} / ${CONFIG.PARTICIPANTS.length}</strong></div>
+    <div class="stat-pill">Next game in: <strong>${totalIn} player${totalIn!==1?'s':''}</strong></div>
+  `;
+}
+
+/* ══ FINGERPRINT ══ */
+function captureFingerprint(){
+  const gl=(()=>{ try{ const c=document.createElement('canvas'); const g=c.getContext('webgl')||c.getContext('experimental-webgl'); if(!g) return 'n/a'; const dbg=g.getExtension('WEBGL_debug_renderer_info'); return dbg?g.getParameter(dbg.UNMASKED_RENDERER_WEBGL):g.getParameter(g.RENDERER); }catch(e){ return 'n/a'; } })();
+  const c2d=(()=>{ try{ const c=document.createElement('canvas'); c.width=200; c.height=40; const ctx=c.getContext('2d'); ctx.textBaseline='top'; ctx.font='14px Arial'; ctx.fillStyle='#f60'; ctx.fillRect(125,1,62,20); ctx.fillStyle='#069'; ctx.fillText('GamePoll',2,15); ctx.fillStyle='rgba(102,204,0,0.7)'; ctx.fillText('GamePoll',4,17); return c.toDataURL().slice(-50); }catch(e){ return 'n/a'; } })();
+  return { ua:navigator.userAgent, screen:`${screen.width}x${screen.height}@${screen.colorDepth}bit`, timezone:Intl.DateTimeFormat().resolvedOptions().timeZone, lang:navigator.language, platform:navigator.platform||'n/a', cores:navigator.hardwareConcurrency||'n/a', mem:navigator.deviceMemory||'n/a', gpu:gl, canvas2d:c2d, touchPoints:navigator.maxTouchPoints, plugins:Array.from(navigator.plugins||[]).map(p=>p.name).join(',').slice(0,80), submittedAt:new Date().toISOString() };
+}
+
+/* ══ LOG TO SHEETS ══ */
+function logToSheets(name,selections,fp){
+  if(!SHEETS_URL||SHEETS_URL.startsWith("PASTE_")) return;
+  const selText=dates.map(d=>{ const v=selections[dateKey(d)]||'—'; return `${fmtDate(d)}: ${v==='OUT'?'OUT':v?'+'+v+' player(s)':'—'}`; }).join(' | ');
+  fetch(SHEETS_URL,{ method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'}, body:JSON.stringify({timestamp:fp.submittedAt,player:name,selections:selText,ua:fp.ua,screen:fp.screen,timezone:fp.timezone,lang:fp.lang,platform:fp.platform,cores:fp.cores,mem:fp.mem,gpu:fp.gpu,canvas2d:fp.canvas2d,touchPoints:fp.touchPoints,plugins:fp.plugins}) }).catch(()=>{});
+}
+
+/* ══ EVENTS ══ */
+playerPicker.addEventListener('change',()=>{ doneBtn.disabled=!playerPicker.value; buildBody(); });
+
+doneBtn.addEventListener('click',()=>{
+  const name=playerPicker.value; if(!name) return;
+  const data=loadData(); const fp=captureFingerprint();
+  data[`__fp__${name}`]=fp; saveData(data);
+  logToSheets(name,data[name]||{},fp);
+  const nextVal=(data[name]||{})[dateKey(dates[0])];
+  let msg,isOut;
+  if(nextVal==='OUT'){ msg=`Too bad ${name.split(' ')[0]}, see you next time! 👋`; isOut=true; }
+  else if(nextVal){ msg=`Got it ${name.split(' ')[0]}! We'll message you to confirm once we have enough players. ⚽`; isOut=false; }
+  else { msg=`Thanks ${name.split(' ')[0]}! Your selections have been saved. ⚽`; isOut=false; }
+  toast.textContent=msg; toast.className=isOut?'out-toast':''; toast.style.display='block';
+  setTimeout(()=>{ toast.style.display='none'; },4500);
+});
+
+/* ══ INIT ══ */
+buildHeader();
+buildBody();
+</script>
+</body>
+</html>
