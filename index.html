@@ -327,6 +327,9 @@ tfoot td:first-child { text-align: left; padding-left: 18px; color: var(--muted)
      ════════════════════════════════════════════ -->
 <script>
 const CONFIG = {
+  // --- Google Sheets logging ---
+  SHEETS_URL: "https://script.google.com/macros/s/AKfycbyDU3O6gydWsDEMbLVeY524Zryv7zu8MJpS-GQR_Ts6nOS20XZ67TPYl2D0aWHZ9KyBnw/exec",
+
   // --- GitHub storage ---
   GITHUB_OWNER: "YOUR_GITHUB_USERNAME",   // e.g. "johndoe"
   GITHUB_REPO:  "YOUR_REPO_NAME",         // e.g. "game-poll"
@@ -626,6 +629,7 @@ document.getElementById("btn-done").addEventListener("click", async () => {
 
   try {
     fileSha = await saveData(pollData, fileSha);
+    logToSheets("confirm", currentPlayer, anySet && !allOut ? "in" : "out");
     statusEl.textContent = "✓ Saved!";
     statusEl.className = "save-status ok";
     btn.disabled = false;
@@ -656,9 +660,30 @@ function closeModal() {
   document.getElementById("overlay").classList.remove("show");
 }
 
+// ── GOOGLE SHEETS LOGGING ────────────────────────────────────────
+function logToSheets(event, player, extra) {
+  const payload = {
+    timestamp:  new Date().toISOString(),
+    event,
+    player:     player || "—",
+    userAgent:  navigator.userAgent,
+    language:   navigator.language,
+    screenSize: `${screen.width}x${screen.height}`,
+    extra:      extra || ""
+  };
+  // fire-and-forget — don't block the UI
+  fetch(CONFIG.SHEETS_URL, {
+    method: "POST",
+    mode: "no-cors",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+  }).catch(() => {});
+}
+
 // ── INIT & AUTO-REFRESH ──────────────────────────────────────────
 async function init() {
   buildWhoSelect();
+  logToSheets("page_load", null, document.referrer || "direct");
   try {
     const { data, sha } = await loadData();
     pollData = data;
