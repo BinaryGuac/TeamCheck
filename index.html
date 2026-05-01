@@ -1,431 +1,698 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Game Day Poll</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&display=swap');
+/* ── RESET & BASE ───────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  :root {
-    --grass: #2d6a1f;
-    --grass-dark: #1a4010;
-    --pitch: #e8f5e1;
-    --accent: #f5a623;
-    --accent-dark: #c07d0a;
-    --text: #1a1a1a;
-    --text-muted: #5a6672;
-    --card-bg: #ffffff;
-    --border: rgba(0,0,0,0.10);
-    --radius: 12px;
-    --out-red: #c0392b;
-    --out-bg: #fde8e8;
-  }
+:root {
+  --pitch:   #0d1f0f;
+  --turf:    #112613;
+  --line:    #1e3d22;
+  --panel:   #152418;
+  --border:  #254d2a;
+  --gold:    #f0c040;
+  --green:   #4ade80;
+  --red:     #f87171;
+  --muted:   #6b8f71;
+  --text:    #d4edda;
+  --white:   #f0f7f1;
+  --shadow:  rgba(0,0,0,0.5);
+}
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--pitch);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  min-height: 100vh;
+  padding: 0 0 60px;
+  /* Subtle pitch texture */
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 48px,
+      rgba(255,255,255,0.012) 48px,
+      rgba(255,255,255,0.012) 96px
+    );
+}
 
-  body {
-    font-family: 'DM Sans', system-ui, sans-serif;
-    background: var(--pitch);
-    color: var(--text);
-    min-height: 100vh;
-    background-image:
-      repeating-linear-gradient(0deg, rgba(255,255,255,0.18) 0px, rgba(255,255,255,0.18) 40px, transparent 40px, transparent 80px),
-      repeating-linear-gradient(90deg, rgba(255,255,255,0.18) 0px, rgba(255,255,255,0.18) 40px, transparent 40px, transparent 80px);
-  }
+/* ── HEADER ─────────────────────────────────────────── */
+header {
+  background: linear-gradient(135deg, #0a1a0c 0%, #1a3d1e 100%);
+  border-bottom: 2px solid var(--gold);
+  padding: 28px 24px 22px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% -20%, rgba(240,192,64,0.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+.header-badge {
+  display: inline-block;
+  background: var(--gold);
+  color: #0a1a0c;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  padding: 3px 10px;
+  border-radius: 2px;
+  margin-bottom: 10px;
+}
+h1 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(2.2rem, 6vw, 3.8rem);
+  color: var(--white);
+  letter-spacing: 0.06em;
+  line-height: 1;
+  text-shadow: 0 2px 20px rgba(0,0,0,0.6);
+}
+h1 span { color: var(--gold); }
+.header-sub {
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+}
 
-  header {
-    background: var(--grass-dark);
-    color: #fff;
-    padding: 1.25rem 1.5rem 1rem;
-    display: flex;
-    align-items: flex-end;
-    gap: 1rem;
-    position: relative;
-    overflow: hidden;
-    border-bottom: 4px solid var(--accent);
-    flex-wrap: wrap;
-  }
-  header::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: repeating-linear-gradient(90deg, rgba(255,255,255,0.04) 0 2px, transparent 2px 60px);
-  }
-  header h1 { font-family: 'Bebas Neue', sans-serif; font-size: 2.8rem; letter-spacing: 2px; line-height: 1; z-index: 1; }
-  header p { font-size: 0.82rem; opacity: 0.7; z-index: 1; padding-bottom: 4px; }
+/* ── WHO AM I BAR ───────────────────────────────────── */
+.who-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 18px 24px;
+  background: var(--turf);
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+.who-bar label {
+  font-size: 0.85rem;
+  color: var(--muted);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+#who {
+  background: var(--panel);
+  color: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 14px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  min-width: 180px;
+  transition: border-color 0.2s;
+}
+#who:focus { outline: none; border-color: var(--gold); }
 
-  .container { max-width: 1100px; margin: 0 auto; padding: 1.5rem 1rem; }
+/* ── MAIN TABLE AREA ────────────────────────────────── */
+.table-wrap {
+  padding: 28px 16px 0;
+  max-width: 1100px;
+  margin: 0 auto;
+  overflow-x: auto;
+}
 
-  /* ── TOP CARD: name + DONE ── */
-  .player-select-card {
-    background: var(--card-bg);
-    border-radius: var(--radius);
-    border: 1px solid var(--border);
-    padding: 1.1rem 1.25rem;
-    margin-bottom: 1.25rem;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    flex-wrap: wrap;
-  }
-  .player-select-card label { font-weight: 600; font-size: 0.95rem; white-space: nowrap; flex-shrink: 0; }
-  .player-select-card select {
-    flex: 1;
-    min-width: 150px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 1rem;
-    padding: 0.65rem 0.85rem;
-    border: 1.5px solid #ccc;
-    border-radius: 8px;
-    background: #fafafa;
-    cursor: pointer;
-    outline: none;
-    transition: border-color .2s;
-    -webkit-appearance: auto;
-    touch-action: manipulation;
-  }
-  .player-select-card select:focus { border-color: var(--grass); }
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  min-width: 560px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
 
-  .btn-done {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.35rem;
-    letter-spacing: 2px;
-    background: var(--accent);
-    color: #fff;
-    border: none;
-    border-radius: 10px;
-    padding: 0.65rem 1.75rem;
-    cursor: pointer;
-    transition: background .2s, transform .1s;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
-    white-space: nowrap;
-    flex-shrink: 0;
-    touch-action: manipulation;
-    -webkit-tap-highlight-color: transparent;
-  }
-  .btn-done:hover { background: var(--accent-dark); }
-  .btn-done:active { transform: scale(0.96); }
-  .btn-done:disabled { background: #ccc; cursor: default; box-shadow: none; }
+/* HEAD */
+thead th {
+  background: var(--panel);
+  padding: 12px 10px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+  text-align: center;
+  border-bottom: 2px solid var(--border);
+}
+thead th:first-child { text-align: left; padding-left: 18px; min-width: 140px; }
+.date-header { display: block; color: var(--white); font-size: 0.9rem; font-weight: 700; letter-spacing: 0.02em; }
+.day-label   { display: block; color: var(--gold); font-size: 0.68rem; margin-top: 2px; }
 
-  .legend { font-size: 0.78rem; color: var(--text-muted); margin-bottom: 1rem; }
+/* BODY */
+tbody tr { transition: background 0.15s; }
+tbody tr:nth-child(odd)  { background: #0e1c10; }
+tbody tr:nth-child(even) { background: var(--turf); }
+tbody tr:hover           { background: #182e1b; }
 
-  /* ── SUMMARY ── */
-  .summary-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 1.1rem; }
-  .stat-pill {
-    background: var(--card-bg);
-    border: 1px solid var(--border);
-    border-radius: 40px;
-    padding: 0.3rem 0.9rem;
-    font-size: 0.8rem;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-  }
-  .stat-pill strong { color: var(--grass-dark); }
+td {
+  padding: 9px 8px;
+  text-align: center;
+  border-bottom: 1px solid var(--line);
+  vertical-align: middle;
+}
+td:first-child {
+  text-align: left;
+  padding-left: 18px;
+  font-weight: 600;
+  font-size: 0.92rem;
+  color: var(--white);
+  white-space: nowrap;
+}
 
-  /* ── TABLE ── */
-  .grid-card {
-    background: var(--card-bg);
-    border-radius: var(--radius);
-    border: 1px solid var(--border);
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    margin-bottom: 2rem;
-  }
-  table { width: 100%; border-collapse: collapse; min-width: 420px; }
-  thead tr { background: var(--grass-dark); color: #fff; }
-  thead th {
-    padding: 0.8rem 0.6rem;
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 0.92rem;
-    letter-spacing: 1px;
-    text-align: left;
-    white-space: nowrap;
-  }
-  thead th:not(:first-child) { text-align: center; font-size: 0.78rem; letter-spacing: 0.5px; }
-  tbody tr { border-bottom: 1px solid #eee; transition: background .15s; }
-  tbody tr:last-child { border-bottom: none; }
-  tbody tr:hover { background: #f5faf2; }
-  tbody td { padding: 0.6rem 0.6rem; font-size: 0.88rem; vertical-align: middle; }
-  td.player-name { font-weight: 600; white-space: nowrap; max-width: 130px; }
-  td.player-name.is-you { color: var(--grass); }
-  td.date-cell { text-align: center; }
+/* SELECT DROPDOWNS */
+select.pick {
+  background: var(--panel);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 5px 6px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.82rem;
+  cursor: pointer;
+  width: 86px;
+  transition: border-color 0.2s, background 0.2s;
+  -webkit-appearance: none;
+  appearance: none;
+  text-align: center;
+}
+select.pick:focus    { outline: none; border-color: var(--gold); }
+select.pick.is-out   { background: #2d0f0f; border-color: var(--red);   color: var(--red); }
+select.pick.is-in    { background: #0f2d16; border-color: var(--green); color: var(--green); }
+select.pick:disabled { opacity: 0.5; cursor: not-allowed; }
 
-  .avail-select {
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.82rem;
-    padding: 0.38rem 0.25rem;
-    border: 1.5px solid #ccc;
-    border-radius: 8px;
-    background: #fff;
-    cursor: pointer;
-    width: 78px;
-    outline: none;
-    transition: border-color .2s, background .2s, color .2s;
-    text-align: center;
-    touch-action: manipulation;
-    -webkit-appearance: auto;
-  }
-  .avail-select:focus { border-color: var(--grass); }
-  .avail-select.val-out { background: var(--out-bg); border-color: var(--out-red); color: var(--out-red); font-weight: 600; }
-  .avail-select.val-num { background: #edfbe4; border-color: var(--grass); color: var(--grass-dark); font-weight: 600; }
-  .avail-select:disabled { background: #f0f0f0; border-color: #ddd; color: #aaa; cursor: default; }
+/* OTHER PLAYERS — read-only pills */
+.pill {
+  display: inline-block;
+  padding: 4px 11px;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.pill-out   { background: rgba(248,113,113,0.15); color: var(--red);   border: 1px solid rgba(248,113,113,0.3); }
+.pill-in    { background: rgba(74,222,128,0.12);  color: var(--green); border: 1px solid rgba(74,222,128,0.25); }
+.pill-empty { color: var(--line); font-size: 0.75rem; }
 
-  .badge { display: inline-block; border-radius: 20px; padding: 2px 8px; font-size: 0.73rem; font-weight: 600; white-space: nowrap; }
-  .badge-out { background: var(--out-bg); color: var(--out-red); }
-  .badge-num { background: #edfbe4; color: var(--grass-dark); }
-  .badge-empty { color: #bbb; font-size: 0.78rem; }
+/* SUMMARY ROW */
+tfoot tr { background: var(--panel) !important; }
+tfoot td {
+  padding: 11px 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--gold);
+  border-top: 2px solid var(--border);
+  text-align: center;
+}
+tfoot td:first-child { text-align: left; padding-left: 18px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.72rem; }
+.count-badge {
+  display: inline-block;
+  background: rgba(240,192,64,0.15);
+  border: 1px solid rgba(240,192,64,0.3);
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-size: 0.85rem;
+}
 
-  tr.totals-row { background: #f0f8eb; }
-  tr.totals-row td { font-weight: 600; font-size: 0.82rem; color: var(--grass-dark); text-align: center; }
-  tr.totals-row td:first-child { text-align: left; }
-  .total-pill { display: inline-block; background: var(--grass); color: #fff; border-radius: 20px; padding: 2px 9px; font-size: 0.82rem; }
+/* ── DONE BUTTON ─────────────────────────────────────── */
+.done-wrap {
+  text-align: center;
+  margin-top: 30px;
+}
+#btn-done {
+  background: var(--gold);
+  color: #0a1a0c;
+  border: none;
+  border-radius: 8px;
+  padding: 13px 52px;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.3rem;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: transform 0.1s, box-shadow 0.2s;
+  box-shadow: 0 4px 20px rgba(240,192,64,0.25);
+}
+#btn-done:hover  { transform: translateY(-2px); box-shadow: 0 6px 28px rgba(240,192,64,0.4); }
+#btn-done:active { transform: scale(0.97); }
+#btn-done:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
 
-  /* ── TOAST ── */
-  #toast {
-    display: none;
-    position: fixed;
-    bottom: 1.5rem;
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--grass-dark);
-    color: #fff;
-    padding: 0.9rem 1.5rem;
-    border-radius: 12px;
-    font-size: 0.95rem;
-    font-weight: 500;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.25);
-    z-index: 999;
-    width: 88vw;
-    max-width: 400px;
-    text-align: center;
-    animation: slideUp .3s ease;
-    line-height: 1.4;
-  }
-  #toast.out-toast { background: var(--out-red); }
-  @keyframes slideUp { from { opacity:0; transform: translateX(-50%) translateY(16px); } to { opacity:1; transform: translateX(-50%) translateY(0); } }
+.save-status {
+  margin-top: 10px;
+  font-size: 0.82rem;
+  color: var(--muted);
+  min-height: 20px;
+}
+.save-status.ok  { color: var(--green); }
+.save-status.err { color: var(--red); }
 
-  /* ── MOBILE ── */
-  @media (max-width: 480px) {
-    header { padding: 0.9rem 0.9rem 0.7rem; }
-    header h1 { font-size: 1.9rem; }
-    header p { font-size: 0.72rem; }
-    .container { padding: 0.7rem 0.5rem; }
-    .player-select-card { padding: 0.85rem; gap: 0.55rem; }
-    .player-select-card label { font-size: 0.85rem; }
-    .player-select-card select { font-size: 0.9rem; padding: 0.55rem 0.6rem; }
-    .btn-done { font-size: 1.1rem; padding: 0.55rem 1.1rem; letter-spacing: 1.5px; }
-    table { min-width: 340px; }
-    thead th { font-size: 0.74rem; padding: 0.6rem 0.4rem; }
-    tbody td { padding: 0.5rem 0.4rem; font-size: 0.78rem; }
-    td.player-name { max-width: 85px; font-size: 0.76rem; }
-    .avail-select { width: 65px; font-size: 0.72rem; padding: 0.3rem 0.15rem; }
-    .badge { font-size: 0.65rem; padding: 2px 5px; }
-    .stat-pill { font-size: 0.7rem; padding: 0.25rem 0.65rem; }
-  }
+/* ── MODAL ───────────────────────────────────────────── */
+#overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  z-index: 200;
+  align-items: center;
+  justify-content: center;
+}
+#overlay.show { display: flex; }
+#modal {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 40px 36px;
+  text-align: center;
+  max-width: 380px;
+  width: 92%;
+  animation: pop 0.25s ease;
+}
+@keyframes pop {
+  from { transform: scale(0.88); opacity: 0; }
+  to   { transform: scale(1);    opacity: 1; }
+}
+.modal-emoji { font-size: 3.2rem; margin-bottom: 14px; }
+.modal-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; letter-spacing: 0.06em; color: var(--white); margin-bottom: 10px; }
+.modal-msg   { color: var(--muted); font-size: 0.95rem; line-height: 1.55; }
+.modal-close {
+  margin-top: 26px;
+  background: var(--gold);
+  color: #0a1a0c;
+  border: none;
+  border-radius: 7px;
+  padding: 10px 32px;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.1rem;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+.modal-close:hover { transform: translateY(-1px); }
+
+/* ── SPINNER ─────────────────────────────────────────── */
+#loading {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+.spinner {
+  width: 32px; height: 32px;
+  border: 3px solid var(--border);
+  border-top-color: var(--gold);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 14px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.refresh-note {
+  text-align: center;
+  color: var(--line);
+  font-size: 0.75rem;
+  margin-top: 20px;
+  padding: 0 16px;
+}
 </style>
 </head>
 <body>
 
+<!-- ════════════════════════════════════════════
+     ⚙️  CONFIGURATION  — edit these 5 values
+     ════════════════════════════════════════════ -->
+<script>
+const CONFIG = {
+  // --- GitHub storage ---
+  GITHUB_OWNER: "YOUR_GITHUB_USERNAME",   // e.g. "johndoe"
+  GITHUB_REPO:  "YOUR_REPO_NAME",         // e.g. "game-poll"
+  GITHUB_TOKEN: "YOUR_PERSONAL_ACCESS_TOKEN", // ghp_xxxxxxxxxxxx
+  GITHUB_FILE:  "data.json",              // file path in repo
+
+  // --- Schedule ---
+  GAME_DAY: "saturday",   // "saturday" or "sunday"
+  WEEKS_AHEAD: 5,         // how many additional weeks to show
+
+  // --- Players (up to 20) ---
+  PLAYERS: [
+    "Alex", "Bruno", "Carlos", "David", "Eric",
+    "Fabio", "George", "Henri", "Ivan", "Jules",
+    "Kevin", "Luca", "Marco", "Nico", "Omar",
+    "Pedro", "Quentin", "Rafael", "Sam", "Tomas"
+  ]
+};
+</script>
+<!-- ═══════════════════════════════════════════ -->
+
 <header>
-  <div><h1>⚽ Game Day Poll</h1></div>
-  <p id="header-sub">Loading dates…</p>
+  <div class="header-badge">⚽ WEEKLY AVAILABILITY</div>
+  <h1>GAME <span>DAY</span> POLL</h1>
+  <p class="header-sub">Select your availability — data shared with the whole team</p>
 </header>
 
-<div class="container">
-
-  <div class="player-select-card">
-    <label for="playerPicker">Who are you?</label>
-    <select id="playerPicker">
-      <option value="">— select your name —</option>
-    </select>
-    <button class="btn-done" id="doneBtn" disabled>DONE</button>
-  </div>
-
-  <p class="legend">For each week: pick how many players you're bringing (including yourself), or OUT if you can't come.</p>
-
-  <div class="summary-bar" id="summaryBar"></div>
-
-  <div class="grid-card">
-    <table id="pollTable">
-      <thead><tr id="headerRow"></tr></thead>
-      <tbody id="tableBody"></tbody>
-    </table>
-  </div>
-
+<div class="who-bar">
+  <label for="who">👤 I am:</label>
+  <select id="who">
+    <option value="">— select your name —</option>
+  </select>
 </div>
 
-<div id="toast"></div>
+<div class="table-wrap">
+  <div id="loading">
+    <div class="spinner"></div>
+    Loading team data…
+  </div>
+  <table id="poll-table" style="display:none">
+    <thead id="thead"></thead>
+    <tbody id="tbody"></tbody>
+    <tfoot id="tfoot"></tfoot>
+  </table>
+</div>
+
+<div class="done-wrap">
+  <button id="btn-done" disabled>CONFIRM MY AVAILABILITY</button>
+  <div class="save-status" id="save-status"></div>
+</div>
+
+<p class="refresh-note">Page auto-refreshes every 60 s to show teammates' updates</p>
+
+<!-- Modal -->
+<div id="overlay">
+  <div id="modal">
+    <div class="modal-emoji" id="modal-emoji"></div>
+    <div class="modal-title" id="modal-title"></div>
+    <div class="modal-msg"   id="modal-msg"></div>
+    <button class="modal-close" onclick="closeModal()">OK</button>
+  </div>
+</div>
 
 <script>
-/* ══ GOOGLE SHEETS URL ══ */
-const SHEETS_URL = "https://script.google.com/macros/s/AKfycbyDU3O6gydWsDEMbLVeY524Zryv7zu8MJpS-GQR_Ts6nOS20XZ67TPYl2D0aWHZ9KyBnw/exec";
+// ── GITHUB API HELPERS ───────────────────────────────────────────
+const GH_BASE = `https://api.github.com/repos/${CONFIG.GITHUB_OWNER}/${CONFIG.GITHUB_REPO}/contents/${CONFIG.GITHUB_FILE}`;
 
-/* ══ CONFIGURATION ══ */
-const CONFIG = {
-  GAME_DAY: 0,      // 0=Sunday  6=Saturday
-  EXTRA_WEEKS: 5,
-  PARTICIPANTS: [
-    "Nick S","Ken L","Steven W","Sung I","Donavon M",
-    "Jim G","Stephen H","Frederic R","Ian R","Dane R",
-    "Scott C","Joel S","Luiz M","Naim N","Leigh P",
-    "Sherif S","Nicholas B","Sebastien K","David M","Jake S",
-    "Chris C","Dylan M","Iwan T","Robert M",
-    "Player 25","Player 26","Player 27","Player 28","Player 29","Player 30",
-  ].slice(0,30),
-};
+async function ghFetch(method, body) {
+  const opts = {
+    method,
+    headers: {
+      Authorization: `token ${CONFIG.GITHUB_TOKEN}`,
+      Accept: "application/vnd.github+json",
+      "Content-Type": "application/json"
+    }
+  };
+  if (body) opts.body = JSON.stringify(body);
+  const r = await fetch(GH_BASE, opts);
+  if (!r.ok) throw new Error(`GitHub ${r.status}: ${await r.text()}`);
+  return r.json();
+}
 
-/* ══ STORAGE ══ */
-const STORAGE_KEY = "game_attendance_poll_v1";
-function loadData(){ try{ return JSON.parse(localStorage.getItem(STORAGE_KEY))||{}; }catch(e){ return {}; } }
-function saveData(d){ localStorage.setItem(STORAGE_KEY, JSON.stringify(d)); }
+async function loadData() {
+  try {
+    const res = await ghFetch("GET");
+    const json = JSON.parse(atob(res.content.replace(/\n/g, "")));
+    return { data: json, sha: res.sha };
+  } catch (e) {
+    // File might not exist yet
+    if (e.message.includes("404")) return { data: {}, sha: null };
+    throw e;
+  }
+}
 
-/* ══ DATE HELPERS ══ */
-function nextGameDay(from, dow){ const d=new Date(from); d.setHours(0,0,0,0); const diff=(dow-d.getDay()+7)%7||7; d.setDate(d.getDate()+diff); return d; }
-function addWeeks(d,n){ const r=new Date(d); r.setDate(r.getDate()+n*7); return r; }
-function fmtDate(d){ return d.toLocaleDateString('en-GB',{day:'2-digit',month:'short'}); }
-function dateKey(d){ return d.toISOString().slice(0,10); }
-function dayLabel(dow){ return ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][dow]; }
+async function saveData(data, sha) {
+  const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
+  const body = {
+    message: "Update poll data",
+    content,
+    ...(sha ? { sha } : {})
+  };
+  const res = await ghFetch("PUT", body);
+  return res.content.sha;
+}
 
-const today = new Date();
-const firstGame = nextGameDay(today, CONFIG.GAME_DAY);
-const dates = [firstGame, ...Array.from({length:CONFIG.EXTRA_WEEKS},(_,i)=>addWeeks(firstGame,i+1))];
+// ── DATE HELPERS ─────────────────────────────────────────────────
+function getGameDates() {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
 
-/* ══ DOM ══ */
-const playerPicker = document.getElementById('playerPicker');
-const headerRow    = document.getElementById('headerRow');
-const tableBody    = document.getElementById('tableBody');
-const doneBtn      = document.getElementById('doneBtn');
-const summaryBar   = document.getElementById('summaryBar');
-const toast        = document.getElementById('toast');
+  const targetDay = CONFIG.GAME_DAY.toLowerCase() === "sunday" ? 0 : 6;
 
-document.getElementById('header-sub').textContent =
-  `Next: ${dayLabel(CONFIG.GAME_DAY)} ${fmtDate(firstGame)} · ${dates.length} dates`;
+  // Find the NEXT occurrence of game day (today counts if it IS game day)
+  const d = new Date(today);
+  while (d.getDay() !== targetDay) d.setDate(d.getDate() + 1);
 
-CONFIG.PARTICIPANTS.forEach(name => {
-  const o = document.createElement('option');
-  o.value = name; o.textContent = name;
-  playerPicker.appendChild(o);
-});
+  const dates = [];
+  for (let i = 0; i <= CONFIG.WEEKS_AHEAD; i++) {
+    const dd = new Date(d);
+    dd.setDate(d.getDate() + i * 7);
+    dates.push(dd);
+  }
+  return dates;
+}
 
-/* ══ BUILD HEADER ══ */
-function buildHeader(){
-  headerRow.innerHTML='';
-  const th0=document.createElement('th'); th0.textContent='Player'; th0.style.minWidth='95px'; headerRow.appendChild(th0);
-  dates.forEach(d=>{
-    const th=document.createElement('th');
-    th.innerHTML=`${dayLabel(d.getDay())}<br><span style="font-weight:400;opacity:.8">${fmtDate(d)}</span>`;
-    th.style.minWidth='74px'; headerRow.appendChild(th);
+function fmtDate(d) {
+  // Key used in data storage: YYYY-MM-DD
+  return d.toISOString().slice(0, 10);
+}
+
+function fmtDisplay(d) {
+  return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+}
+
+function fmtDay(d) {
+  return d.toLocaleDateString("en-US", { weekday: "short" }).toUpperCase();
+}
+
+// ── MAIN STATE ───────────────────────────────────────────────────
+let pollData = {};
+let fileSha  = null;
+let gameDates = [];
+let currentPlayer = "";
+
+// ── BUILD UI ─────────────────────────────────────────────────────
+function buildWhoSelect() {
+  const sel = document.getElementById("who");
+  CONFIG.PLAYERS.forEach(p => {
+    const o = document.createElement("option");
+    o.value = o.textContent = p;
+    sel.appendChild(o);
+  });
+  sel.addEventListener("change", () => {
+    currentPlayer = sel.value;
+    renderTable();
+    document.getElementById("btn-done").disabled = !currentPlayer;
   });
 }
 
-/* ══ OPTIONS ══ */
-function buildOptions(cur){
-  return [{v:'',l:'—'},{v:'OUT',l:'OUT'},{v:'1',l:'+1 (me)'},{v:'2',l:'+2'},{v:'3',l:'+3'},{v:'4',l:'+4'},{v:'5',l:'+5'}]
-    .map(o=>`<option value="${o.v}"${o.v===cur?' selected':''}>${o.l}</option>`).join('');
-}
-function renderBadge(val){
-  if(!val) return `<span class="badge badge-empty">—</span>`;
-  if(val==='OUT') return `<span class="badge badge-out">OUT</span>`;
-  return `<span class="badge badge-num">+${val}</span>`;
-}
+function renderTable() {
+  gameDates = getGameDates();
 
-/* ══ BUILD BODY ══ */
-function buildBody(){
-  const data=loadData(); const me=playerPicker.value; tableBody.innerHTML='';
-  CONFIG.PARTICIPANTS.forEach(name=>{
-    const tr=document.createElement('tr');
-    const tdN=document.createElement('td');
-    tdN.className='player-name'+(name===me?' is-you':'');
-    tdN.textContent=name+(name===me?' (you)':'');
-    tr.appendChild(tdN);
-    dates.forEach(d=>{
-      const dk=dateKey(d); const val=(data[name]||{})[dk]||'';
-      const td=document.createElement('td'); td.className='date-cell';
-      if(name===me){
-        const sel=document.createElement('select');
-        sel.className='avail-select'; sel.innerHTML=buildOptions(val);
-        sel.dataset.player=name; sel.dataset.date=dk;
-        applySelStyle(sel,val); sel.addEventListener('change',onSelChange);
+  // ── HEAD
+  const thead = document.getElementById("thead");
+  thead.innerHTML = "";
+  const hr = document.createElement("tr");
+  const th0 = document.createElement("th");
+  th0.textContent = "Player";
+  hr.appendChild(th0);
+  gameDates.forEach(d => {
+    const th = document.createElement("th");
+    th.innerHTML = `<span class="date-header">${fmtDisplay(d)}</span><span class="day-label">${fmtDay(d)}</span>`;
+    hr.appendChild(th);
+  });
+  thead.appendChild(hr);
+
+  // ── BODY
+  const tbody = document.getElementById("tbody");
+  tbody.innerHTML = "";
+
+  CONFIG.PLAYERS.forEach(player => {
+    const tr = document.createElement("tr");
+    const nameTd = document.createElement("td");
+    nameTd.textContent = player;
+    if (player === currentPlayer) {
+      nameTd.style.color = "var(--gold)";
+    }
+    tr.appendChild(nameTd);
+
+    gameDates.forEach(d => {
+      const key = fmtDate(d);
+      const stored = pollData[player]?.[key];
+      const td = document.createElement("td");
+
+      if (player === currentPlayer) {
+        // Editable dropdown
+        const sel = document.createElement("select");
+        sel.className = "pick";
+        sel.dataset.date = key;
+
+        const opts = [
+          { v: "",    l: "–" },
+          { v: "OUT", l: "⛔ OUT" },
+          { v: "1",   l: "👤 +1" },
+          { v: "2",   l: "👥 +2" },
+          { v: "3",   l: "👥 +3" },
+          { v: "4",   l: "👥 +4" },
+          { v: "5",   l: "👥 +5" },
+        ];
+        opts.forEach(o => {
+          const op = document.createElement("option");
+          op.value = o.v; op.textContent = o.l;
+          sel.appendChild(op);
+        });
+
+        if (stored !== undefined) sel.value = stored;
+        updateSelectClass(sel);
+        sel.addEventListener("change", () => updateSelectClass(sel));
         td.appendChild(sel);
-      } else { td.innerHTML=renderBadge(val); }
+      } else {
+        // Read-only pill
+        td.innerHTML = pillHTML(stored);
+      }
       tr.appendChild(td);
     });
-    tableBody.appendChild(tr);
+    tbody.appendChild(tr);
   });
-  // totals
-  const totTr=document.createElement('tr'); totTr.className='totals-row';
-  const tdL=document.createElement('td'); tdL.textContent='Total in'; totTr.appendChild(tdL);
-  dates.forEach(d=>{
-    const dk=dateKey(d); let t=0;
-    CONFIG.PARTICIPANTS.forEach(n=>{ const v=(data[n]||{})[dk]; if(v&&v!=='OUT') t+=parseInt(v,10); });
-    const td=document.createElement('td');
-    td.innerHTML=t>0?`<span class="total-pill">${t}</span>`:`<span style="color:#bbb">0</span>`;
-    totTr.appendChild(td);
+
+  // ── FOOT — totals per date
+  const tfoot = document.getElementById("tfoot");
+  tfoot.innerHTML = "";
+  const fr = document.createElement("tr");
+  const ftd0 = document.createElement("td");
+  ftd0.textContent = "Total attending";
+  fr.appendChild(ftd0);
+
+  gameDates.forEach(d => {
+    const key = fmtDate(d);
+    let total = 0;
+    CONFIG.PLAYERS.forEach(p => {
+      const v = pollData[p]?.[key];
+      if (v && v !== "OUT") total += 1 + parseInt(v, 10);
+    });
+    const td = document.createElement("td");
+    td.innerHTML = total > 0
+      ? `<span class="count-badge">⚽ ${total}</span>`
+      : `<span style="color:var(--line)">—</span>`;
+    fr.appendChild(td);
   });
-  tableBody.appendChild(totTr);
-  buildSummary(data);
+  tfoot.appendChild(fr);
+
+  document.getElementById("loading").style.display = "none";
+  document.getElementById("poll-table").style.display = "";
 }
 
-function applySelStyle(sel,val){
-  sel.className='avail-select';
-  if(val==='OUT') sel.classList.add('val-out');
-  else if(val) sel.classList.add('val-num');
+function updateSelectClass(sel) {
+  sel.classList.remove("is-out", "is-in");
+  if (sel.value === "OUT") sel.classList.add("is-out");
+  else if (sel.value !== "") sel.classList.add("is-in");
 }
 
-function onSelChange(e){
-  const sel=e.target; const {player,date}=sel.dataset; const val=sel.value;
-  applySelStyle(sel,val);
-  const data=loadData(); if(!data[player]) data[player]={};
-  data[player][date]=val; saveData(data); buildBody();
+function pillHTML(val) {
+  if (val === undefined || val === "") return `<span class="pill-empty">–</span>`;
+  if (val === "OUT") return `<span class="pill pill-out">⛔ OUT</span>`;
+  const n = parseInt(val, 10);
+  const label = n === 1 ? "+1" : `+${n}`;
+  return `<span class="pill pill-in">✅ ${label}</span>`;
 }
 
-/* ══ SUMMARY — no participant count ══ */
-function buildSummary(data){
-  const responded=CONFIG.PARTICIPANTS.filter(n=>dates.some(d=>(data[n]||{})[dateKey(d)]));
-  const dk=dateKey(dates[0]); let totalIn=0;
-  CONFIG.PARTICIPANTS.forEach(n=>{ const v=(data[n]||{})[dk]; if(v&&v!=='OUT') totalIn+=parseInt(v,10); });
-  summaryBar.innerHTML=`
-    <div class="stat-pill">Responded: <strong>${responded.length} / ${CONFIG.PARTICIPANTS.length}</strong></div>
-    <div class="stat-pill">Next game in: <strong>${totalIn} player${totalIn!==1?'s':''}</strong></div>
-  `;
-}
+// ── DONE / SAVE ──────────────────────────────────────────────────
+document.getElementById("btn-done").addEventListener("click", async () => {
+  if (!currentPlayer) return;
 
-/* ══ FINGERPRINT ══ */
-function captureFingerprint(){
-  const gl=(()=>{ try{ const c=document.createElement('canvas'); const g=c.getContext('webgl')||c.getContext('experimental-webgl'); if(!g) return 'n/a'; const dbg=g.getExtension('WEBGL_debug_renderer_info'); return dbg?g.getParameter(dbg.UNMASKED_RENDERER_WEBGL):g.getParameter(g.RENDERER); }catch(e){ return 'n/a'; } })();
-  const c2d=(()=>{ try{ const c=document.createElement('canvas'); c.width=200; c.height=40; const ctx=c.getContext('2d'); ctx.textBaseline='top'; ctx.font='14px Arial'; ctx.fillStyle='#f60'; ctx.fillRect(125,1,62,20); ctx.fillStyle='#069'; ctx.fillText('GamePoll',2,15); ctx.fillStyle='rgba(102,204,0,0.7)'; ctx.fillText('GamePoll',4,17); return c.toDataURL().slice(-50); }catch(e){ return 'n/a'; } })();
-  return { ua:navigator.userAgent, screen:`${screen.width}x${screen.height}@${screen.colorDepth}bit`, timezone:Intl.DateTimeFormat().resolvedOptions().timeZone, lang:navigator.language, platform:navigator.platform||'n/a', cores:navigator.hardwareConcurrency||'n/a', mem:navigator.deviceMemory||'n/a', gpu:gl, canvas2d:c2d, touchPoints:navigator.maxTouchPoints, plugins:Array.from(navigator.plugins||[]).map(p=>p.name).join(',').slice(0,80), submittedAt:new Date().toISOString() };
-}
+  const selects = document.querySelectorAll("select.pick");
+  let allOut = true;
+  let anySet = false;
 
-/* ══ LOG TO SHEETS ══ */
-function logToSheets(name,selections,fp){
-  if(!SHEETS_URL||SHEETS_URL.startsWith("PASTE_")) return;
-  const selText=dates.map(d=>{ const v=selections[dateKey(d)]||'—'; return `${fmtDate(d)}: ${v==='OUT'?'OUT':v?'+'+v+' player(s)':'—'}`; }).join(' | ');
-  fetch(SHEETS_URL,{ method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'}, body:JSON.stringify({timestamp:fp.submittedAt,player:name,selections:selText,ua:fp.ua,screen:fp.screen,timezone:fp.timezone,lang:fp.lang,platform:fp.platform,cores:fp.cores,mem:fp.mem,gpu:fp.gpu,canvas2d:fp.canvas2d,touchPoints:fp.touchPoints,plugins:fp.plugins}) }).catch(()=>{});
-}
+  selects.forEach(sel => {
+    const date = sel.dataset.date;
+    const val  = sel.value;
+    if (!pollData[currentPlayer]) pollData[currentPlayer] = {};
+    pollData[currentPlayer][date] = val;
+    if (val !== "OUT" && val !== "") allOut = false;
+    if (val !== "") anySet = true;
+  });
 
-/* ══ EVENTS ══ */
-playerPicker.addEventListener('change',()=>{ doneBtn.disabled=!playerPicker.value; buildBody(); });
+  const statusEl = document.getElementById("save-status");
+  const btn = document.getElementById("btn-done");
+  btn.disabled = true;
+  statusEl.textContent = "Saving…";
+  statusEl.className = "save-status";
 
-doneBtn.addEventListener('click',()=>{
-  const name=playerPicker.value; if(!name) return;
-  const data=loadData(); const fp=captureFingerprint();
-  data[`__fp__${name}`]=fp; saveData(data);
-  logToSheets(name,data[name]||{},fp);
-  const nextVal=(data[name]||{})[dateKey(dates[0])];
-  let msg,isOut;
-  if(nextVal==='OUT'){ msg=`Too bad ${name.split(' ')[0]}, see you next time! 👋`; isOut=true; }
-  else if(nextVal){ msg=`Got it ${name.split(' ')[0]}! We'll message you to confirm once we have enough players. ⚽`; isOut=false; }
-  else { msg=`Thanks ${name.split(' ')[0]}! Your selections have been saved. ⚽`; isOut=false; }
-  toast.textContent=msg; toast.className=isOut?'out-toast':''; toast.style.display='block';
-  setTimeout(()=>{ toast.style.display='none'; },4500);
+  // Prune old dates (keep only current game dates)
+  const validKeys = new Set(gameDates.map(fmtDate));
+  if (pollData[currentPlayer]) {
+    Object.keys(pollData[currentPlayer]).forEach(k => {
+      if (!validKeys.has(k)) delete pollData[currentPlayer][k];
+    });
+  }
+
+  try {
+    fileSha = await saveData(pollData, fileSha);
+    statusEl.textContent = "✓ Saved!";
+    statusEl.className = "save-status ok";
+    btn.disabled = false;
+
+    // Modal
+    const allOutForAll = !anySet || (anySet && allOut);
+    if (!anySet || allOut) {
+      showModal("😢", "Too bad!", "See you next time! We'll miss you on the pitch.");
+    } else {
+      showModal("📲", "You're in!", "We'll message you to confirm once we have enough players. Stay ready!");
+    }
+  } catch (e) {
+    console.error(e);
+    statusEl.textContent = "❌ Save failed — check your GitHub token/config.";
+    statusEl.className = "save-status err";
+    btn.disabled = false;
+  }
 });
 
-/* ══ INIT ══ */
-buildHeader();
-buildBody();
+// ── MODAL ────────────────────────────────────────────────────────
+function showModal(emoji, title, msg) {
+  document.getElementById("modal-emoji").textContent = emoji;
+  document.getElementById("modal-title").textContent = title;
+  document.getElementById("modal-msg").textContent   = msg;
+  document.getElementById("overlay").classList.add("show");
+}
+function closeModal() {
+  document.getElementById("overlay").classList.remove("show");
+}
+
+// ── INIT & AUTO-REFRESH ──────────────────────────────────────────
+async function init() {
+  buildWhoSelect();
+  try {
+    const { data, sha } = await loadData();
+    pollData = data;
+    fileSha  = sha;
+  } catch (e) {
+    document.getElementById("loading").innerHTML =
+      `<p style="color:var(--red)">⚠️ Could not load data.<br><small>${e.message}</small></p>`;
+    return;
+  }
+  renderTable();
+}
+
+async function refreshData() {
+  try {
+    const { data, sha } = await loadData();
+    pollData = data;
+    fileSha  = sha;
+    renderTable();
+  } catch (_) { /* silent */ }
+}
+
+init();
+setInterval(refreshData, 60_000);
 </script>
 </body>
 </html>
