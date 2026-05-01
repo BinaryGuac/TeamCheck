@@ -331,13 +331,13 @@ const CONFIG = {
   SHEETS_URL: "https://script.google.com/macros/s/AKfycbyDU3O6gydWsDEMbLVeY524Zryv7zu8MJpS-GQR_Ts6nOS20XZ67TPYl2D0aWHZ9KyBnw/exec",
 
   // --- GitHub storage ---
-  GITHUB_OWNER: "BinaryGuac",   // e.g. "johndoe"
-  GITHUB_REPO:  "TeamCheck",         // e.g. "game-poll"
-  GITHUB_TOKEN: "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", // ghp_xxxxxxxxxxxx
+  GITHUB_OWNER: "YOUR_GITHUB_USERNAME",   // e.g. "johndoe"
+  GITHUB_REPO:  "YOUR_REPO_NAME",         // e.g. "game-poll"
+  GITHUB_TOKEN: "YOUR_PERSONAL_ACCESS_TOKEN", // ghp_xxxxxxxxxxxx
   GITHUB_FILE:  "data.json",              // file path in repo
 
   // --- Schedule ---
-  GAME_DAY: "sunday",   // "saturday" or "sunday"
+  GAME_DAY: "saturday",   // "saturday" or "sunday"
   WEEKS_AHEAD: 2,         // how many additional weeks to show
 
   // --- Players (up to 20) ---
@@ -628,8 +628,8 @@ document.getElementById("btn-done").addEventListener("click", async () => {
   }
 
   try {
-    fileSha = await saveData(pollData, fileSha);
     logToSheets("confirm", currentPlayer, anySet && !allOut ? "in" : "out");
+    fileSha = await saveData(pollData, fileSha);
     statusEl.textContent = "✓ Saved!";
     statusEl.className = "save-status ok";
     btn.disabled = false;
