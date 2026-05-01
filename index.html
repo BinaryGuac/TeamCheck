@@ -3,710 +3,780 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Game Day Poll</title>
+<title>GAME DAY POLL</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <style>
-/* ── RESET & BASE ───────────────────────────────────── */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --green-deep: #0a1a0c;
+    --green-mid:  #1a3d1e;
+    --green-light:#2a5c30;
+    --gold:       #f0c040;
+    --gold-dark:  #c9a030;
+    --white:      #f5f5f5;
+    --row-light:  #ffffff;
+    --row-dark:   #e8f0e8;
+    --text-dark:  #1a1a1a;
+    --pill-in:    #2a6e2a;
+    --pill-out:   #8b1a1a;
+    --pill-bg-in: #d4f0d4;
+    --pill-bg-out:#f8d4d4;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
 
-:root {
-  --pitch:   #0d1f0f;
-  --turf:    #112613;
-  --line:    #1e3d22;
-  --panel:   #152418;
-  --border:  #254d2a;
-  --gold:    #f0c040;
-  --green:   #4ade80;
-  --red:     #f87171;
-  --muted:   #6b8f71;
-  --text:    #d4edda;
-  --white:   #f0f7f1;
-  --shadow:  rgba(0,0,0,0.5);
-}
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #f0f4f0;
+    color: var(--text-dark);
+    min-height: 100vh;
+  }
 
-body {
-  background: var(--pitch);
-  color: var(--text);
-  font-family: 'DM Sans', sans-serif;
-  min-height: 100vh;
-  padding: 0 0 60px;
-  background-image:
-    repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 48px,
-      rgba(255,255,255,0.012) 48px,
-      rgba(255,255,255,0.012) 96px
-    );
-}
+  /* ── HEADER ── */
+  header {
+    background: linear-gradient(135deg, var(--green-deep) 0%, var(--green-mid) 60%, var(--green-light) 100%);
+    padding: 18px 24px 14px;
+    text-align: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.4);
+  }
+  .header-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2rem, 6vw, 3.2rem);
+    color: var(--gold);
+    letter-spacing: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+  }
+  .header-icon { font-size: clamp(1.6rem, 5vw, 2.6rem); }
+  .header-subtitle {
+    color: #aad0aa;
+    font-size: 0.82rem;
+    margin-top: 4px;
+    font-weight: 300;
+    letter-spacing: 0.5px;
+  }
+  .header-subtitle span { color: var(--gold); font-weight: 500; }
 
-/* ── HEADER ─────────────────────────────────────────── */
-header {
-  background: linear-gradient(135deg, #0a1a0c 0%, #1a3d1e 100%);
-  border-bottom: 2px solid var(--gold);
-  padding: 28px 24px 22px;
-  text-align: center;
-  position: relative;
-  overflow: hidden;
-}
-header::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse at 50% -20%, rgba(240,192,64,0.12) 0%, transparent 70%);
-  pointer-events: none;
-}
-.header-badge {
-  display: inline-block;
-  background: var(--gold);
-  color: #0a1a0c;
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 0.7rem;
-  letter-spacing: 0.15em;
-  padding: 3px 10px;
-  border-radius: 2px;
-  margin-bottom: 10px;
-}
-h1 {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: clamp(2.2rem, 6vw, 3.8rem);
-  color: var(--white);
-  letter-spacing: 0.06em;
-  line-height: 1;
-  text-shadow: 0 2px 20px rgba(0,0,0,0.6);
-}
-h1 span { color: var(--gold); }
-.header-sub {
-  margin-top: 6px;
-  color: var(--muted);
-  font-size: 0.85rem;
-  letter-spacing: 0.05em;
-}
+  /* ── WHO BAR ── */
+  .who-bar {
+    background: var(--green-mid);
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    border-bottom: 2px solid var(--gold);
+  }
+  .who-bar label {
+    color: #cce8cc;
+    font-size: 0.85rem;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  #playerSelect {
+    flex: 1;
+    min-width: 160px;
+    max-width: 260px;
+    padding: 7px 10px;
+    border-radius: 6px;
+    border: 2px solid var(--gold);
+    background: var(--green-deep);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M0 0l6 8 6-8z' fill='%23f0c040'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 28px;
+  }
+  #confirmBtn {
+    padding: 8px 22px;
+    background: var(--gold);
+    color: var(--green-deep);
+    border: none;
+    border-radius: 6px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.1rem;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    white-space: nowrap;
+  }
+  #confirmBtn:hover  { background: #ffd050; transform: scale(1.03); }
+  #confirmBtn:active { transform: scale(0.97); }
+  #statusMsg {
+    color: #aad0aa;
+    font-size: 0.82rem;
+    font-style: italic;
+    flex-basis: 100%;
+  }
 
-/* ── WHO AM I BAR ───────────────────────────────────── */
-.who-bar {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  padding: 14px 24px;
-  background: var(--turf);
-  border-bottom: 1px solid var(--border);
-  flex-wrap: wrap;
-}
-.who-bar label {
-  font-size: 0.85rem;
-  color: var(--muted);
-  font-weight: 500;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-#who {
-  background: var(--panel);
-  color: var(--white);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 8px 14px;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 0.95rem;
-  font-weight: 600;
-  cursor: pointer;
-  min-width: 180px;
-  transition: border-color 0.2s;
-}
-#who:focus { outline: none; border-color: var(--gold); }
-#btn-done {
-  background: var(--gold);
-  color: #0a1a0c;
-  border: none;
-  border-radius: 8px;
-  padding: 9px 28px;
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 1.1rem;
-  letter-spacing: 0.1em;
-  cursor: pointer;
-  transition: transform 0.1s, box-shadow 0.2s;
-  box-shadow: 0 4px 20px rgba(240,192,64,0.25);
-}
-#btn-done:hover  { transform: translateY(-2px); box-shadow: 0 6px 28px rgba(240,192,64,0.4); }
-#btn-done:active { transform: scale(0.97); }
-#btn-done:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
-.save-status {
-  font-size: 0.82rem;
-  color: var(--muted);
-  min-width: 80px;
-}
-.save-status.ok  { color: var(--green); }
-.save-status.err { color: var(--red); }
+  /* ── TABLE WRAPPER ── */
+  .table-wrap {
+    overflow-x: auto;
+    padding: 16px 12px 24px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 420px;
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.10);
+  }
+  thead {
+    background: linear-gradient(135deg, var(--green-deep), var(--green-mid));
+    color: var(--gold);
+  }
+  thead th {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1rem;
+    letter-spacing: 2px;
+    padding: 12px 16px;
+    text-align: center;
+    border-right: 1px solid rgba(255,255,255,0.08);
+  }
+  thead th:first-child { text-align: left; }
+  thead th:last-child  { border-right: none; }
+  .date-sub {
+    display: block;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.68rem;
+    font-weight: 400;
+    color: #aad0aa;
+    letter-spacing: 0.5px;
+    margin-top: 2px;
+  }
 
-/* ── MAIN TABLE AREA ────────────────────────────────── */
-.table-wrap {
-  padding: 28px 16px 0;
-  max-width: 1100px;
-  margin: 0 auto;
-  overflow-x: auto;
-}
+  tbody tr:nth-child(odd)  { background: var(--row-light); }
+  tbody tr:nth-child(even) { background: var(--row-dark); }
+  tbody tr:hover { background: #d8ecd8; transition: background 0.15s; }
 
-table {
-  width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
-  min-width: 560px;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  overflow: hidden;
-}
+  tbody td {
+    padding: 8px 12px;
+    border-right: 1px solid #dde8dd;
+    vertical-align: middle;
+    font-size: 0.88rem;
+  }
+  tbody td:last-child { border-right: none; }
+  .player-name {
+    font-weight: 600;
+    color: var(--green-mid);
+    white-space: nowrap;
+    min-width: 90px;
+  }
 
-/* HEAD */
-thead th {
-  background: var(--panel);
-  padding: 12px 10px;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 0.72rem;
-  font-weight: 600;
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  white-space: nowrap;
-  text-align: center;
-  border-bottom: 2px solid var(--border);
-}
-thead th:first-child { text-align: left; padding-left: 18px; min-width: 140px; }
-.date-header { display: block; color: var(--white); font-size: 0.9rem; font-weight: 700; letter-spacing: 0.02em; }
-.day-label   { display: block; color: var(--gold); font-size: 0.68rem; margin-top: 2px; }
+  /* ── DROPDOWNS ── */
+  .avail-select {
+    width: 100%;
+    min-width: 120px;
+    padding: 5px 6px;
+    border-radius: 5px;
+    border: 1px solid #b0c8b0;
+    background: #fff;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem;
+    cursor: pointer;
+    color: var(--text-dark);
+  }
+  .avail-select:focus { outline: 2px solid var(--gold); border-color: var(--gold); }
 
-/* BODY */
-tbody tr { transition: background 0.15s; }
-tbody tr:nth-child(odd)  { background: #16a34a; }
-tbody tr:nth-child(even) { background: #86efac; }
-tbody tr:hover           { background: #22c55e; }
+  /* ── PILLS (other players' selections) ── */
+  .pill {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 0.76rem;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .pill-in  { background: var(--pill-bg-in);  color: var(--pill-in);  border: 1px solid #a0d0a0; }
+  .pill-out { background: var(--pill-bg-out); color: var(--pill-out); border: 1px solid #e0a0a0; }
+  .pill-none { background: #f0f0f0; color: #888; border: 1px solid #ddd; }
 
-td {
-  padding: 9px 8px;
-  text-align: center;
-  border-bottom: 1px solid #15803d;
-  vertical-align: middle;
-  color: #0a2e10;
-}
-td:first-child {
-  text-align: left;
-  padding-left: 18px;
-  font-weight: 600;
-  font-size: 0.92rem;
-  color: #0a2e10;
-  white-space: nowrap;
-}
+  /* ── FOOTER ROW ── */
+  tfoot tr { background: linear-gradient(135deg, var(--green-deep), var(--green-mid)) !important; }
+  tfoot td {
+    padding: 10px 12px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1rem;
+    color: var(--gold);
+    letter-spacing: 1px;
+    text-align: center;
+    border-right: 1px solid rgba(255,255,255,0.1);
+  }
+  tfoot td:first-child { text-align: left; }
+  tfoot td:last-child  { border-right: none; }
 
-/* SELECT DROPDOWNS */
-select.pick {
-  background: rgba(255,255,255,0.35);
-  color: #0a2e10;
-  border: 1px solid #15803d;
-  border-radius: 6px;
-  padding: 5px 6px;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 0.82rem;
-  cursor: pointer;
-  width: 86px;
-  transition: border-color 0.2s, background 0.2s;
-  -webkit-appearance: none;
-  appearance: none;
-  text-align: center;
-}
-select.pick:focus    { outline: none; border-color: #0a2e10; }
-select.pick.is-out   { background: rgba(180,0,0,0.15); border-color: #7f0000; color: #7f0000; }
-select.pick.is-in    { background: rgba(10,60,20,0.2);  border-color: #0a2e10; color: #0a2e10; }
-select.pick:disabled { opacity: 0.5; cursor: not-allowed; }
+  /* ── MODAL ── */
+  .modal-bg {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 999;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-bg.active { display: flex; }
+  .modal {
+    background: #fff;
+    border-radius: 14px;
+    padding: 36px 32px;
+    text-align: center;
+    max-width: 360px;
+    width: 90%;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.3);
+    animation: popIn 0.25s ease;
+  }
+  @keyframes popIn {
+    from { transform: scale(0.8); opacity: 0; }
+    to   { transform: scale(1);   opacity: 1; }
+  }
+  .modal-icon { font-size: 3rem; margin-bottom: 12px; }
+  .modal h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.6rem;
+    letter-spacing: 2px;
+    color: var(--green-mid);
+    margin-bottom: 8px;
+  }
+  .modal p { color: #555; font-size: 0.92rem; line-height: 1.5; }
+  .modal-close {
+    margin-top: 20px;
+    padding: 9px 28px;
+    background: var(--gold);
+    border: none;
+    border-radius: 7px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1rem;
+    letter-spacing: 1px;
+    cursor: pointer;
+    color: var(--green-deep);
+    transition: background 0.2s;
+  }
+  .modal-close:hover { background: #ffd050; }
 
-/* OTHER PLAYERS — read-only pills */
-.pill {
-  display: inline-block;
-  padding: 4px 11px;
-  border-radius: 20px;
-  font-size: 0.78rem;
-  font-weight: 600;
-  white-space: nowrap;
-}
-.pill-out   { background: rgba(180,0,0,0.15); color: #7f0000; border: 1px solid rgba(180,0,0,0.4); }
-.pill-in    { background: rgba(10,60,20,0.2); color: #0a2e10; border: 1px solid rgba(10,60,20,0.4); }
-.pill-empty { color: #15803d; font-size: 0.75rem; }
+  /* ── LOADING / ERROR ── */
+  .status-bar {
+    text-align: center;
+    padding: 10px;
+    font-size: 0.82rem;
+    color: #555;
+    background: #f8f8f8;
+    border-bottom: 1px solid #ddd;
+  }
+  .status-bar.error { color: #c0392b; background: #fdf0f0; }
 
-/* SUMMARY ROW */
-tfoot tr { background: var(--panel) !important; }
-tfoot td {
-  padding: 11px 8px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: var(--gold);
-  border-top: 2px solid var(--border);
-  text-align: center;
-}
-tfoot td:first-child { text-align: left; padding-left: 18px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.72rem; }
-.count-badge {
-  display: inline-block;
-  background: rgba(240,192,64,0.15);
-  border: 1px solid rgba(240,192,64,0.3);
-  border-radius: 4px;
-  padding: 2px 8px;
-  font-size: 0.85rem;
-}
+  /* ── VERSION FOOTER ── */
+  footer {
+    text-align: center;
+    padding: 14px;
+    font-size: 0.72rem;
+    color: #aaa;
+    background: var(--green-deep);
+    color: #6a9a6a;
+  }
 
-/* ── MODAL ───────────────────────────────────────────── */
-#overlay {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.75);
-  z-index: 200;
-  align-items: center;
-  justify-content: center;
-}
-#overlay.show { display: flex; }
-#modal {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 40px 36px;
-  text-align: center;
-  max-width: 380px;
-  width: 92%;
-  animation: pop 0.25s ease;
-}
-@keyframes pop {
-  from { transform: scale(0.88); opacity: 0; }
-  to   { transform: scale(1);    opacity: 1; }
-}
-.modal-emoji { font-size: 3.2rem; margin-bottom: 14px; }
-.modal-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; letter-spacing: 0.06em; color: var(--white); margin-bottom: 10px; }
-.modal-msg   { color: var(--muted); font-size: 0.95rem; line-height: 1.55; }
-.modal-close {
-  margin-top: 26px;
-  background: var(--gold);
-  color: #0a1a0c;
-  border: none;
-  border-radius: 7px;
-  padding: 10px 32px;
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 1.1rem;
-  letter-spacing: 0.08em;
-  cursor: pointer;
-  transition: transform 0.1s;
-}
-.modal-close:hover { transform: translateY(-1px); }
 
-/* ── SPINNER ─────────────────────────────────────────── */
-#loading {
-  text-align: center;
-  padding: 60px 20px;
-  color: var(--muted);
-  font-size: 0.9rem;
-}
-.spinner {
-  width: 32px; height: 32px;
-  border: 3px solid var(--border);
-  border-top-color: var(--gold);
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-  margin: 0 auto 14px;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
-
-.refresh-note {
-  text-align: center;
-  color: var(--line);
-  font-size: 0.75rem;
-  margin-top: 20px;
-  padding: 0 16px;
-}
 </style>
 </head>
 <body>
 
-<!-- ════════════════════════════════════════════
-     ⚙️  CONFIGURATION  — edit these 5 values
-     ════════════════════════════════════════════ -->
-<script>
-const CONFIG = {
-  // --- Google Sheets logging ---
-  SHEETS_URL: "https://script.google.com/macros/s/AKfycbyDU3O6gydWsDEMbLVeY524Zryv7zu8MJpS-GQR_Ts6nOS20XZ67TPYl2D0aWHZ9KyBnw/exec",
-
-  // --- GitHub storage ---
-  GITHUB_OWNER: "BinaryGuac",   // e.g. "johndoe"
-  GITHUB_REPO:  "TeamCheck",         // e.g. "game-poll"
-  GITHUB_TOKEN: "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", // ghp_xxxxxxxxxxxx
-  GITHUB_FILE:  "data.json",              // file path in repo
-
-  // --- Schedule ---
-  GAME_DAY: "saturday",   // "saturday" or "sunday"
-  WEEKS_AHEAD: 2,         // how many additional weeks to show
-
-  // --- Players (up to 20) ---
-  PLAYERS: [
-    "Alex", "Bruno", "Carlos", "David", "Eric",
-    "Fabio", "George", "Henri", "Ivan", "Jules",
-    "Kevin", "Luca", "Marco", "Nico", "Omar",
-    "Pedro", "Quentin", "Rafael", "Sam", "Tomas"
-  ]
-};
-</script>
-<!-- ═══════════════════════════════════════════ -->
-
+<!-- HEADER -->
 <header>
-  <div class="header-badge">⚽ WEEKLY AVAILABILITY</div>
-  <h1>GAME <span>DAY</span> POLL</h1>
-  <p class="header-sub">Select your availability — coming weekend is required, following weeks are optional</p>
+  <div class="header-title">
+    <span class="header-icon">⚽</span>
+    GAME DAY POLL
+    <span class="header-icon">🥅</span>
+  </div>
+  <div class="header-subtitle">
+    Select your availability for this coming weekend &mdash;
+    <span>coming weekend is required</span>, following weeks are optional &mdash; click CONFIRM once done
+  </div>
 </header>
 
+<!-- WHO BAR -->
 <div class="who-bar">
-  <label for="who">👤 I am:</label>
-  <select id="who">
+  <label for="playerSelect">👤 I AM:</label>
+  <select id="playerSelect">
     <option value="">— select your name —</option>
   </select>
-  <button id="btn-done" disabled>CONFIRM MY AVAILABILITY</button>
-  <div class="save-status" id="save-status"></div>
+  <button id="confirmBtn" onclick="confirmSelections()">CONFIRM</button>
+  <span id="statusMsg"></span>
 </div>
 
+<div id="statusBar" class="status-bar" style="display:none"></div>
+
+<!-- TABLE -->
 <div class="table-wrap">
-  <div id="loading">
-    <div class="spinner"></div>
-    Loading team data…
-  </div>
-  <table id="poll-table" style="display:none">
-    <thead id="thead"></thead>
-    <tbody id="tbody"></tbody>
-    <tfoot id="tfoot"></tfoot>
+  <table id="mainTable">
+    <thead id="tableHead"></thead>
+    <tbody id="tableBody"></tbody>
+    <tfoot id="tableFoot"></tfoot>
   </table>
 </div>
 
-<p class="refresh-note">Page auto-refreshes every 60 s to show teammates' updates</p>
-
-<!-- Modal -->
-<div id="overlay">
-  <div id="modal">
-    <div class="modal-emoji" id="modal-emoji"></div>
-    <div class="modal-title" id="modal-title"></div>
-    <div class="modal-msg"   id="modal-msg"></div>
+<!-- MODAL -->
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <div class="modal-icon" id="modalIcon"></div>
+    <h2 id="modalTitle"></h2>
+    <p  id="modalMsg"></p>
     <button class="modal-close" onclick="closeModal()">OK</button>
   </div>
 </div>
 
+<!-- VERSION FOOTER -->
+<footer>TeamCheck &bull; v2026-05-01-09:15 PST &bull; Game Day Poll</footer>
+
 <script>
-// ── GITHUB API HELPERS ───────────────────────────────────────────
-const GH_BASE = `https://api.github.com/repos/${CONFIG.GITHUB_OWNER}/${CONFIG.GITHUB_REPO}/contents/${CONFIG.GITHUB_FILE}`;
+// ═══════════════════════════════════════════════════════════
+//  CONFIG
+// ═══════════════════════════════════════════════════════════
+const CONFIG = {
+  GAME_DAY:   "saturday",   // "saturday" or "sunday"
+  WEEKS_AHEAD: 2,           // +2 more weeks beyond the next game day = 3 columns total
+  SHEETS_URL: "https://script.google.com/macros/s/AKfycbyDU3O6gydWsDEMbLVeY524Zryv7zu8MJpS-GQR_Ts6nOS20XZ67TPYl2D0aWHZ9KyBnw/exec",
+  PLAYERS: [
+    "Nick","Ken","Steven","Sung I","Donavon","Jim","Stephen","Frederic","Ian","Dane",
+    "Scott","Joel","Luiz","Naim","Leigh","Sherif","Nicholas","Sebastien","David","Jake",
+    "Chris C","Dylan","Iwan","Robert",
+    "Player-25","Player-26","Player-27","Player-28","Player-29","Player-30"
+  ],
+  // Range in Data sheet: row 1 = headers, rows 2..N = players, cols A=player, B..D=dates
+  DATA_START_ROW: 2,
+  DATA_START_COL: "A"
+};
 
-async function ghFetch(method, body) {
-  const opts = {
-    method,
-    headers: {
-      Authorization: `token ${CONFIG.GITHUB_TOKEN}`,
-      Accept: "application/vnd.github+json",
-      "Content-Type": "application/json"
-    }
-  };
-  if (body) opts.body = JSON.stringify(body);
-  const r = await fetch(GH_BASE, opts);
-  if (!r.ok) throw new Error(`GitHub ${r.status}: ${await r.text()}`);
-  return r.json();
-}
-
-async function loadData() {
-  try {
-    const res = await ghFetch("GET");
-    const json = JSON.parse(atob(res.content.replace(/\n/g, "")));
-    return { data: json, sha: res.sha };
-  } catch (e) {
-    // File might not exist yet
-    if (e.message.includes("404")) return { data: {}, sha: null };
-    throw e;
+// ═══════════════════════════════════════════════════════════
+//  DATE HELPERS
+// ═══════════════════════════════════════════════════════════
+function getNextGameDay(fromDate) {
+  const targetDay = CONFIG.GAME_DAY === "saturday" ? 6 : 0;
+  const d = new Date(fromDate);
+  const today = new Date(); today.setHours(0,0,0,0);
+  // Stay on same date until day AFTER the game
+  const dayOfWeek = d.getDay();
+  let diff = (targetDay - dayOfWeek + 7) % 7;
+  if (diff === 0) {
+    // Today IS the game day — keep it until tomorrow
+    const tomorrow = new Date(today); tomorrow.setDate(tomorrow.getDate()+1);
+    if (fromDate >= tomorrow) diff = 7; // day after: advance
   }
+  if (diff === 0) diff = 0; // still today
+  d.setDate(d.getDate() + diff);
+  return d;
 }
 
-async function saveData(data, sha) {
-  const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
-  const body = {
-    message: "Update poll data",
-    content,
-    ...(sha ? { sha } : {})
-  };
-  const res = await ghFetch("PUT", body);
-  return res.content.sha;
-}
-
-// ── DATE HELPERS ─────────────────────────────────────────────────
 function getGameDates() {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
-  const targetDay = CONFIG.GAME_DAY.toLowerCase() === "sunday" ? 0 : 6;
-
-  // Find the NEXT occurrence of game day (today counts if it IS game day)
-  const d = new Date(today);
-  while (d.getDay() !== targetDay) d.setDate(d.getDate() + 1);
-
-  const dates = [];
-  for (let i = 0; i <= CONFIG.WEEKS_AHEAD; i++) {
-    const dd = new Date(d);
-    dd.setDate(d.getDate() + i * 7);
-    dates.push(dd);
+  const today = new Date(); today.setHours(0,0,0,0);
+  const first = getNextGameDay(today);
+  const dates = [first];
+  for (let i = 1; i <= CONFIG.WEEKS_AHEAD; i++) {
+    const d = new Date(first);
+    d.setDate(d.getDate() + 7 * i);
+    dates.push(d);
   }
   return dates;
 }
 
-function fmtDate(d) {
-  // Key used in data storage: YYYY-MM-DD
-  return d.toISOString().slice(0, 10);
+function dateKey(d) {
+  return d.toISOString().slice(0,10); // YYYY-MM-DD
 }
 
-function fmtDisplay(d) {
-  return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+function formatDate(d) {
+  return d.toLocaleDateString('en-US', { month:'short', day:'numeric', weekday:'short' });
 }
 
-function fmtDay(d) {
-  return d.toLocaleDateString("en-US", { weekday: "short" }).toUpperCase();
-}
-
-// ── MAIN STATE ───────────────────────────────────────────────────
-let pollData = {};
-let fileSha  = null;
-let gameDates = [];
+// ═══════════════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════════════
+let gameDates = getGameDates();
+let dateCols  = gameDates.map(dateKey);
+// selections[player][dateKey] = value string or ""
+let selections = {};
 let currentPlayer = "";
 
-// ── BUILD UI ─────────────────────────────────────────────────────
-function buildWhoSelect() {
-  const sel = document.getElementById("who");
-  CONFIG.PLAYERS.forEach(p => {
-    const o = document.createElement("option");
-    o.value = o.textContent = p;
-    sel.appendChild(o);
+CONFIG.PLAYERS.forEach(p => { selections[p] = {}; });
+
+// ═══════════════════════════════════════════════════════════
+//  POPULATE NAME DROPDOWN
+// ═══════════════════════════════════════════════════════════
+(function buildDropdown() {
+  const sel = document.getElementById("playerSelect");
+  CONFIG.PLAYERS.forEach(name => {
+    const opt = document.createElement("option");
+    opt.value = name; opt.textContent = name;
+    sel.appendChild(opt);
   });
   sel.addEventListener("change", () => {
     currentPlayer = sel.value;
     renderTable();
-    document.getElementById("btn-done").disabled = !currentPlayer;
   });
-}
+})();
 
+// ═══════════════════════════════════════════════════════════
+//  DROPDOWN OPTIONS
+// ═══════════════════════════════════════════════════════════
+const OPTIONS = [
+  { value: "",   label: "–" },
+  { value: "OUT", label: "⛔ OUT" },
+  { value: "1",   label: "👤 +1 (me)" },
+  { value: "2",   label: "👥 +2" },
+  { value: "3",   label: "👥 +3" },
+  { value: "4",   label: "👥 +4" },
+  { value: "5",   label: "👥 +5" },
+];
+
+// ═══════════════════════════════════════════════════════════
+//  RENDER TABLE
+// ═══════════════════════════════════════════════════════════
 function renderTable() {
-  gameDates = getGameDates();
-
-  // ── HEAD
-  const thead = document.getElementById("thead");
-  thead.innerHTML = "";
-  const hr = document.createElement("tr");
-  const th0 = document.createElement("th");
-  th0.textContent = "Player";
-  hr.appendChild(th0);
-  gameDates.forEach(d => {
+  // HEAD
+  const head = document.getElementById("tableHead");
+  head.innerHTML = "";
+  const hRow = document.createElement("tr");
+  const th0 = document.createElement("th"); th0.textContent = "PLAYER"; hRow.appendChild(th0);
+  dateCols.forEach((dk, i) => {
     const th = document.createElement("th");
-    th.innerHTML = `<span class="date-header">${fmtDisplay(d)}</span><span class="day-label">${fmtDay(d)}</span>`;
-    hr.appendChild(th);
+    th.innerHTML = `${CONFIG.GAME_DAY.charAt(0).toUpperCase()+CONFIG.GAME_DAY.slice(1)}<span class="date-sub">${formatDate(gameDates[i])}</span>`;
+    hRow.appendChild(th);
   });
-  thead.appendChild(hr);
+  head.appendChild(hRow);
 
-  // ── BODY
-  const tbody = document.getElementById("tbody");
+  // BODY
+  const tbody = document.getElementById("tableBody");
   tbody.innerHTML = "";
 
   CONFIG.PLAYERS.forEach(player => {
     const tr = document.createElement("tr");
-    const nameTd = document.createElement("td");
-    nameTd.textContent = player;
-    if (player === currentPlayer) {
-      nameTd.style.color = "var(--gold)";
-    }
-    tr.appendChild(nameTd);
+    const tdName = document.createElement("td");
+    tdName.className = "player-name"; tdName.textContent = player;
+    tr.appendChild(tdName);
 
-    gameDates.forEach(d => {
-      const key = fmtDate(d);
-      const stored = pollData[player]?.[key];
+    dateCols.forEach(dk => {
       const td = document.createElement("td");
-
       if (player === currentPlayer) {
         // Editable dropdown
         const sel = document.createElement("select");
-        sel.className = "pick";
-        sel.dataset.date = key;
-
-        const opts = [
-          { v: "",    l: "–" },
-          { v: "OUT", l: "⛔ OUT" },
-          { v: "1",   l: "👤 +1" },
-          { v: "2",   l: "👥 +2" },
-          { v: "3",   l: "👥 +3" },
-          { v: "4",   l: "👥 +4" },
-          { v: "5",   l: "👥 +5" },
-        ];
-        opts.forEach(o => {
-          const op = document.createElement("option");
-          op.value = o.v; op.textContent = o.l;
-          sel.appendChild(op);
+        sel.className = "avail-select";
+        OPTIONS.forEach(o => {
+          const opt = document.createElement("option");
+          opt.value = o.value; opt.textContent = o.label;
+          if ((selections[player][dk] || "") === o.value) opt.selected = true;
+          sel.appendChild(opt);
         });
-
-        if (stored !== undefined) sel.value = stored;
-        updateSelectClass(sel);
-        sel.addEventListener("change", () => updateSelectClass(sel));
+        sel.addEventListener("change", () => {
+          selections[player][dk] = sel.value;
+        });
         td.appendChild(sel);
       } else {
         // Read-only pill
-        td.innerHTML = pillHTML(stored);
+        const val = selections[player][dk] || "";
+        td.appendChild(makePill(val));
       }
       tr.appendChild(td);
     });
     tbody.appendChild(tr);
   });
 
-  // ── FOOT — totals per date
-  const tfoot = document.getElementById("tfoot");
+  // FOOTER totals
+  const tfoot = document.getElementById("tableFoot");
   tfoot.innerHTML = "";
-  const fr = document.createElement("tr");
-  const ftd0 = document.createElement("td");
-  ftd0.textContent = "Total attending";
-  fr.appendChild(ftd0);
-
-  gameDates.forEach(d => {
-    const key = fmtDate(d);
+  const fRow = document.createElement("tr");
+  const ft0 = document.createElement("td"); ft0.textContent = "TOTAL"; fRow.appendChild(ft0);
+  dateCols.forEach(dk => {
     let total = 0;
     CONFIG.PLAYERS.forEach(p => {
-      const v = pollData[p]?.[key];
-      if (v && v !== "OUT") total += 1 + parseInt(v, 10);
+      const v = selections[p][dk] || "";
+      if (v !== "" && v !== "OUT") total += parseInt(v) || 0;
     });
-    const td = document.createElement("td");
-    td.innerHTML = total > 0
-      ? `<span class="count-badge">⚽ ${total}</span>`
-      : `<span style="color:var(--line)">—</span>`;
-    fr.appendChild(td);
+    const ftd = document.createElement("td");
+    ftd.textContent = total > 0 ? `${total} 👟` : "—";
+    fRow.appendChild(ftd);
   });
-  tfoot.appendChild(fr);
-
-  document.getElementById("loading").style.display = "none";
-  document.getElementById("poll-table").style.display = "";
+  tfoot.appendChild(fRow);
 }
 
-function updateSelectClass(sel) {
-  sel.classList.remove("is-out", "is-in");
-  if (sel.value === "OUT") sel.classList.add("is-out");
-  else if (sel.value !== "") sel.classList.add("is-in");
-}
-
-function pillHTML(val) {
-  if (val === undefined || val === "") return `<span class="pill-empty">–</span>`;
-  if (val === "OUT") return `<span class="pill pill-out">⛔ OUT</span>`;
-  const n = parseInt(val, 10);
-  const label = n === 1 ? "+1" : `+${n}`;
-  return `<span class="pill pill-in">✅ ${label}</span>`;
-}
-
-// ── DONE / SAVE ──────────────────────────────────────────────────
-document.getElementById("btn-done").addEventListener("click", async () => {
-  if (!currentPlayer) return;
-
-  const selects = document.querySelectorAll("select.pick");
-  let allOut = true;
-  let anySet = false;
-
-  selects.forEach(sel => {
-    const date = sel.dataset.date;
-    const val  = sel.value;
-    if (!pollData[currentPlayer]) pollData[currentPlayer] = {};
-    pollData[currentPlayer][date] = val;
-    if (val !== "OUT" && val !== "") allOut = false;
-    if (val !== "") anySet = true;
-  });
-
-  const statusEl = document.getElementById("save-status");
-  const btn = document.getElementById("btn-done");
-  btn.disabled = true;
-  statusEl.textContent = "Saving…";
-  statusEl.className = "save-status";
-
-  // Prune old dates (keep only current game dates)
-  const validKeys = new Set(gameDates.map(fmtDate));
-  if (pollData[currentPlayer]) {
-    Object.keys(pollData[currentPlayer]).forEach(k => {
-      if (!validKeys.has(k)) delete pollData[currentPlayer][k];
-    });
+function makePill(val) {
+  const span = document.createElement("span");
+  span.className = "pill";
+  if (!val) {
+    span.classList.add("pill-none");
+    span.textContent = "–";
+  } else if (val === "OUT") {
+    span.classList.add("pill-out");
+    span.textContent = "⛔ OUT";
+  } else {
+    span.classList.add("pill-in");
+    span.textContent = val === "1" ? "👤 +1" : `👥 +${val}`;
   }
+  return span;
+}
 
+// ═══════════════════════════════════════════════════════════
+//  GOOGLE SHEETS — READ DATA
+// ═══════════════════════════════════════════════════════════
+async function loadData() {
+  showStatus("Loading data\u2026");
   try {
-    logToSheets("confirm", currentPlayer, anySet && !allOut ? "in" : "out");
-    fileSha = await saveData(pollData, fileSha);
-    statusEl.textContent = "✓ Saved!";
-    statusEl.className = "save-status ok";
-    btn.disabled = false;
+    // Read wide range — covers header + all players, Z cols = plenty for any date columns
+    // encodeURIComponent is required: the colon in "A1:Z31" must be encoded in the query string
+    // or Apps Script's URL parser misreads the range parameter
+    const range = "A1:Z" + (CONFIG.PLAYERS.length + 1);
+    const url = CONFIG.SHEETS_URL + "?sheet=Data&range=" + encodeURIComponent(range);
+    const resp = await fetch(url, { redirect: "follow" });
+    const text = await resp.text();
 
-    // Modal
-    const allOutForAll = !anySet || (anySet && allOut);
-    if (!anySet || allOut) {
-      showModal("😢", "Too bad!", "See you next time! We'll miss you on the pitch.");
-    } else {
-      showModal("📲", "You're in!", "We'll message you to confirm once we have enough players. Stay ready!");
+    // Guard: Apps Script occasionally returns an HTML error page instead of JSON
+    if (!text.trim().startsWith("{")) throw new Error("Non-JSON response: " + text.slice(0, 100));
+
+    const json = JSON.parse(text);
+    if (json.status !== "ok") throw new Error(json.message);
+
+    const rows = json.values;
+    if (!rows || rows.length < 2) { hideStatus(); renderTable(); return; }
+
+    // Row 0 = headers: ["player", "2025-05-03", "2025-05-10", ...]
+    // Normalise: Sheets can return date cells as full ISO timestamps ("2025-05-03T00:00:00.000Z")
+    const headers = rows[0].map(h => {
+      const s = String(h).trim();
+      // Slice to YYYY-MM-DD if it looks like an ISO timestamp
+      return (s.length > 10 && s.indexOf("T") !== -1) ? s.slice(0, 10) : s;
+    });
+
+    // Build dateKey -> column-index map
+    const colMap = {};
+    headers.forEach((h, i) => { if (i > 0) colMap[h] = i; });
+
+    // Clear only the current date columns before repopulating
+    CONFIG.PLAYERS.forEach(p => { dateCols.forEach(dk => { selections[p][dk] = ""; }); });
+
+    for (let r = 1; r < rows.length; r++) {
+      const row = rows[r];
+      const playerName = String(row[0] || "").trim();
+      if (!playerName || selections[playerName] === undefined) continue;
+      dateCols.forEach(dk => {
+        const ci = colMap[dk];
+        if (ci !== undefined && row[ci] !== undefined) {
+          const val = String(row[ci]).trim();
+          if (val) selections[playerName][dk] = val;
+        }
+      });
     }
-  } catch (e) {
-    console.error(e);
-    statusEl.textContent = "❌ Save failed — check your GitHub token/config.";
-    statusEl.className = "save-status err";
-    btn.disabled = false;
+
+    hideStatus();
+    renderTable();
+  } catch(e) {
+    showStatus("\u26a0\ufe0f Could not load data: " + e.message, true);
+    renderTable();
   }
-});
-
-// ── MODAL ────────────────────────────────────────────────────────
-function showModal(emoji, title, msg) {
-  document.getElementById("modal-emoji").textContent = emoji;
-  document.getElementById("modal-title").textContent = title;
-  document.getElementById("modal-msg").textContent   = msg;
-  document.getElementById("overlay").classList.add("show");
-}
-function closeModal() {
-  document.getElementById("overlay").classList.remove("show");
 }
 
-// ── GOOGLE SHEETS LOGGING ────────────────────────────────────────
-function logToSheets(event, player, extra) {
-  const payload = {
-    timestamp:  new Date().toISOString(),
-    event,
-    player:     player || "—",
-    userAgent:  navigator.userAgent,
-    language:   navigator.language,
-    screenSize: `${screen.width}x${screen.height}`,
-    extra:      extra || ""
-  };
-  // fire-and-forget — don't block the UI
-  fetch(CONFIG.SHEETS_URL, {
-    method: "POST",
-    mode: "no-cors",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload)
-  }).catch(() => {});
-}
+// ═══════════════════════════════════════════════════════════
+//  GOOGLE SHEETS — WRITE DATA (current player's row only)
+// ═══════════════════════════════════════════════════════════
+async function saveData() {
+  // Find the row index for the current player (1-based, row 1 = header)
+  const playerRowIndex = CONFIG.PLAYERS.indexOf(currentPlayer);
+  if (playerRowIndex === -1) return false;
 
-// ── INIT & AUTO-REFRESH ──────────────────────────────────────────
-async function init() {
-  buildWhoSelect();
-  logToSheets("page_load", null, document.referrer || "direct");
+  // Sheet row = header row (1) + player index (0-based) + 1 = playerRowIndex + 2
+  const sheetRow = playerRowIndex + 2;
+
+  // Build a single row: player name + selections for each date col
+  const rowValues = [
+    currentPlayer,
+    ...dateCols.map(dk => selections[currentPlayer][dk] || "")
+  ];
+
+  // We also need to ensure the header row exists (write it at A1 if this is first save)
+  // Write header + player row in one call using two separate POSTs would need two round trips.
+  // Instead: write header at A1 always (idempotent), then write player row.
+  // More efficient: write just the player row at the correct row, but first ensure header exists.
+  // We use a two-value 2D array: [[header...], [playerRow...]] only when headers are missing,
+  // otherwise just the single player row at the correct offset.
+
+  // Always write the header row + this player's row as a targeted 2-row block:
+  // Row A1 = headers (safe to overwrite, they never change), Row sheetRow = player data.
+  // To avoid overwriting others, we write ONLY the player's own row at its exact position.
+  // Header is written separately only if needed — here we just patch the player row.
+
+  const headers = ["player", ...dateCols];
+
+  // Write header at A1 (idempotent — same every time)
+  const headerPayload = { range: "A1", values: [headers] };
+  // Write player row at exact row position
+  const colCount = rowValues.length;
+  const lastCol  = String.fromCharCode(64 + colCount); // A=1, B=2 ...
+  const playerRange = `A${sheetRow}:${lastCol}${sheetRow}`;
+  const playerPayload = { range: playerRange, values: [rowValues] };
+
   try {
-    const { data, sha } = await loadData();
-    pollData = data;
-    fileSha  = sha;
-  } catch (e) {
-    document.getElementById("loading").innerHTML =
-      `<p style="color:var(--red)">⚠️ Could not load data.<br><small>${e.message}</small></p>`;
+    // 1) Write header row (idempotent)
+    await fetch(CONFIG.SHEETS_URL, {
+      method: "POST", redirect: "follow",
+      body: JSON.stringify(headerPayload)
+    });
+    // 2) Write only this player's row
+    const resp = await fetch(CONFIG.SHEETS_URL, {
+      method: "POST", redirect: "follow",
+      body: JSON.stringify(playerPayload)
+    });
+    const json = JSON.parse(await resp.text());
+    if (json.status !== "ok") throw new Error(json.message);
+    return true;
+  } catch(e) {
+    showStatus("⚠️ Save failed: " + e.message, true);
+    return false;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+//  CONFIRM
+// ═══════════════════════════════════════════════════════════
+async function confirmSelections() {
+  if (!currentPlayer) {
+    document.getElementById("statusMsg").textContent = "⚠️ Please select your name first!";
     return;
   }
-  renderTable();
+  document.getElementById("statusMsg").textContent = "Saving…";
+  const saved = await saveData();
+  if (!saved) { document.getElementById("statusMsg").textContent = ""; return; }
+  document.getElementById("statusMsg").textContent = "";
+
+  // Log confirm event with full fingerprint
+  logConfirm(currentPlayer, selections[currentPlayer]);
+
+  // Modal based on FIRST (coming weekend) date only
+  const firstDateVal = selections[currentPlayer][dateCols[0]] || "";
+  if (firstDateVal === "OUT") {
+    showModal("😢", "SEE YOU NEXT TIME!", "Too bad you can't make it this weekend — we'll miss you on the pitch!");
+  } else if (firstDateVal === "") {
+    showModal("📋", "GOT IT!", "Your selections have been saved. Don't forget to update your coming weekend availability!");
+  } else {
+    showModal("⚽", "YOU'RE IN!", "We'll message you to confirm when we have enough players. Get ready!");
+  }
+
+  renderTable(); // refresh pills
+  loadData();    // reload from sheet to pick up any concurrent changes
 }
 
-async function refreshData() {
+// ═══════════════════════════════════════════════════════════
+//  MODAL
+// ═══════════════════════════════════════════════════════════
+function showModal(icon, title, msg) {
+  document.getElementById("modalIcon").textContent  = icon;
+  document.getElementById("modalTitle").textContent = title;
+  document.getElementById("modalMsg").textContent   = msg;
+  document.getElementById("modalBg").classList.add("active");
+}
+function closeModal() {
+  document.getElementById("modalBg").classList.remove("active");
+}
+
+// ═══════════════════════════════════════════════════════════
+//  STATUS BAR
+// ═══════════════════════════════════════════════════════════
+function showStatus(msg, isError) {
+  const bar = document.getElementById("statusBar");
+  bar.textContent = msg;
+  bar.className   = "status-bar" + (isError ? " error" : "");
+  bar.style.display = "block";
+}
+function hideStatus() {
+  document.getElementById("statusBar").style.display = "none";
+}
+
+// ═══════════════════════════════════════════════════════════
+//  LOGGING
+// ═══════════════════════════════════════════════════════════
+
+// Fetch IP once and cache it
+let cachedIP = "";
+async function getIP() {
+  if (cachedIP) return cachedIP;
   try {
-    const { data, sha } = await loadData();
-    pollData = data;
-    fileSha  = sha;
-    renderTable();
-  } catch (_) { /* silent */ }
+    const r = await fetch("https://api.ipify.org?format=json");
+    const d = await r.json();
+    cachedIP = d.ip || "";
+  } catch(_) {}
+  return cachedIP;
 }
 
-init();
-setInterval(refreshData, 60_000);
+// Page load — lightweight: timestamp + IP only
+async function logPageLoad() {
+  const ip = await getIP();
+  const payload = {
+    timestamp: new Date().toISOString(),
+    player:    "",
+    selections:"",
+    event:     "page_load",
+    ua: "", screen: "", timezone: "", lang: "", platform: "",
+    cores: "", mem: "", gpu: "", canvas2d: "", touchPoints: "",
+    plugins: "", ip: ip
+  };
+  fetch(CONFIG.SHEETS_URL, {
+    method: "POST", mode: "no-cors",
+    body: JSON.stringify(payload)
+  });
+}
+
+// CONFIRM — full fingerprint
+async function logConfirm(player, selectionsSnapshot) {
+  const ip = await getIP();
+
+  let canvas2d = "";
+  try {
+    const c = document.createElement("canvas");
+    const ctx = c.getContext("2d");
+    ctx.fillText("TeamCheck🏟️", 2, 14);
+    canvas2d = c.toDataURL().slice(-40);
+  } catch(_) {}
+
+  let gpu = "";
+  try {
+    const gl = document.createElement("canvas").getContext("webgl");
+    const dbg = gl.getExtension("WEBGL_debug_renderer_info");
+    gpu = gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL);
+  } catch(_) {}
+
+  const payload = {
+    timestamp:   new Date().toISOString(),
+    player:      player,
+    selections:  JSON.stringify(selectionsSnapshot),
+    event:       "confirm",
+    ua:          navigator.userAgent,
+    screen:      `${screen.width}x${screen.height}`,
+    timezone:    Intl.DateTimeFormat().resolvedOptions().timeZone,
+    lang:        navigator.language,
+    platform:    navigator.platform || "",
+    cores:       navigator.hardwareConcurrency || "",
+    mem:         navigator.deviceMemory || "",
+    gpu:         gpu,
+    canvas2d:    canvas2d,
+    touchPoints: navigator.maxTouchPoints || 0,
+    plugins:     Array.from(navigator.plugins || []).map(p=>p.name).join("|").slice(0,200),
+    ip:          ip
+  };
+  fetch(CONFIG.SHEETS_URL, {
+    method: "POST", mode: "no-cors",
+    body: JSON.stringify(payload)
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════════════
+renderTable();
+loadData();
+logPageLoad();
 </script>
 </body>
 </html>
