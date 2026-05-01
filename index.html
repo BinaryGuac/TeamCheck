@@ -30,7 +30,6 @@ body {
   font-family: 'DM Sans', sans-serif;
   min-height: 100vh;
   padding: 0 0 60px;
-  /* Subtle pitch texture */
   background-image:
     repeating-linear-gradient(
       0deg,
@@ -90,7 +89,7 @@ h1 span { color: var(--gold); }
   align-items: center;
   justify-content: center;
   gap: 12px;
-  padding: 18px 24px;
+  padding: 14px 24px;
   background: var(--turf);
   border-bottom: 1px solid var(--border);
   flex-wrap: wrap;
@@ -116,6 +115,29 @@ h1 span { color: var(--gold); }
   transition: border-color 0.2s;
 }
 #who:focus { outline: none; border-color: var(--gold); }
+#btn-done {
+  background: var(--gold);
+  color: #0a1a0c;
+  border: none;
+  border-radius: 8px;
+  padding: 9px 28px;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.1rem;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: transform 0.1s, box-shadow 0.2s;
+  box-shadow: 0 4px 20px rgba(240,192,64,0.25);
+}
+#btn-done:hover  { transform: translateY(-2px); box-shadow: 0 6px 28px rgba(240,192,64,0.4); }
+#btn-done:active { transform: scale(0.97); }
+#btn-done:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+.save-status {
+  font-size: 0.82rem;
+  color: var(--muted);
+  min-width: 80px;
+}
+.save-status.ok  { color: var(--green); }
+.save-status.err { color: var(--red); }
 
 /* ── MAIN TABLE AREA ────────────────────────────────── */
 .table-wrap {
@@ -155,30 +177,31 @@ thead th:first-child { text-align: left; padding-left: 18px; min-width: 140px; }
 
 /* BODY */
 tbody tr { transition: background 0.15s; }
-tbody tr:nth-child(odd)  { background: #0e1c10; }
-tbody tr:nth-child(even) { background: var(--turf); }
-tbody tr:hover           { background: #182e1b; }
+tbody tr:nth-child(odd)  { background: #16a34a; }
+tbody tr:nth-child(even) { background: #86efac; }
+tbody tr:hover           { background: #22c55e; }
 
 td {
   padding: 9px 8px;
   text-align: center;
-  border-bottom: 1px solid var(--line);
+  border-bottom: 1px solid #15803d;
   vertical-align: middle;
+  color: #0a2e10;
 }
 td:first-child {
   text-align: left;
   padding-left: 18px;
   font-weight: 600;
   font-size: 0.92rem;
-  color: var(--white);
+  color: #0a2e10;
   white-space: nowrap;
 }
 
 /* SELECT DROPDOWNS */
 select.pick {
-  background: var(--panel);
-  color: var(--text);
-  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.35);
+  color: #0a2e10;
+  border: 1px solid #15803d;
   border-radius: 6px;
   padding: 5px 6px;
   font-family: 'DM Sans', sans-serif;
@@ -190,9 +213,9 @@ select.pick {
   appearance: none;
   text-align: center;
 }
-select.pick:focus    { outline: none; border-color: var(--gold); }
-select.pick.is-out   { background: #2d0f0f; border-color: var(--red);   color: var(--red); }
-select.pick.is-in    { background: #0f2d16; border-color: var(--green); color: var(--green); }
+select.pick:focus    { outline: none; border-color: #0a2e10; }
+select.pick.is-out   { background: rgba(180,0,0,0.15); border-color: #7f0000; color: #7f0000; }
+select.pick.is-in    { background: rgba(10,60,20,0.2);  border-color: #0a2e10; color: #0a2e10; }
 select.pick:disabled { opacity: 0.5; cursor: not-allowed; }
 
 /* OTHER PLAYERS — read-only pills */
@@ -204,9 +227,9 @@ select.pick:disabled { opacity: 0.5; cursor: not-allowed; }
   font-weight: 600;
   white-space: nowrap;
 }
-.pill-out   { background: rgba(248,113,113,0.15); color: var(--red);   border: 1px solid rgba(248,113,113,0.3); }
-.pill-in    { background: rgba(74,222,128,0.12);  color: var(--green); border: 1px solid rgba(74,222,128,0.25); }
-.pill-empty { color: var(--line); font-size: 0.75rem; }
+.pill-out   { background: rgba(180,0,0,0.15); color: #7f0000; border: 1px solid rgba(180,0,0,0.4); }
+.pill-in    { background: rgba(10,60,20,0.2); color: #0a2e10; border: 1px solid rgba(10,60,20,0.4); }
+.pill-empty { color: #15803d; font-size: 0.75rem; }
 
 /* SUMMARY ROW */
 tfoot tr { background: var(--panel) !important; }
@@ -227,37 +250,6 @@ tfoot td:first-child { text-align: left; padding-left: 18px; color: var(--muted)
   padding: 2px 8px;
   font-size: 0.85rem;
 }
-
-/* ── DONE BUTTON ─────────────────────────────────────── */
-.done-wrap {
-  text-align: center;
-  margin-top: 30px;
-}
-#btn-done {
-  background: var(--gold);
-  color: #0a1a0c;
-  border: none;
-  border-radius: 8px;
-  padding: 13px 52px;
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 1.3rem;
-  letter-spacing: 0.1em;
-  cursor: pointer;
-  transition: transform 0.1s, box-shadow 0.2s;
-  box-shadow: 0 4px 20px rgba(240,192,64,0.25);
-}
-#btn-done:hover  { transform: translateY(-2px); box-shadow: 0 6px 28px rgba(240,192,64,0.4); }
-#btn-done:active { transform: scale(0.97); }
-#btn-done:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
-
-.save-status {
-  margin-top: 10px;
-  font-size: 0.82rem;
-  color: var(--muted);
-  min-height: 20px;
-}
-.save-status.ok  { color: var(--green); }
-.save-status.err { color: var(--red); }
 
 /* ── MODAL ───────────────────────────────────────────── */
 #overlay {
@@ -343,7 +335,7 @@ const CONFIG = {
 
   // --- Schedule ---
   GAME_DAY: "saturday",   // "saturday" or "sunday"
-  WEEKS_AHEAD: 5,         // how many additional weeks to show
+  WEEKS_AHEAD: 2,         // how many additional weeks to show
 
   // --- Players (up to 20) ---
   PLAYERS: [
@@ -359,7 +351,7 @@ const CONFIG = {
 <header>
   <div class="header-badge">⚽ WEEKLY AVAILABILITY</div>
   <h1>GAME <span>DAY</span> POLL</h1>
-  <p class="header-sub">Select your availability — data shared with the whole team</p>
+  <p class="header-sub">Select your availability — coming weekend is required, following weeks are optional</p>
 </header>
 
 <div class="who-bar">
@@ -367,6 +359,8 @@ const CONFIG = {
   <select id="who">
     <option value="">— select your name —</option>
   </select>
+  <button id="btn-done" disabled>CONFIRM MY AVAILABILITY</button>
+  <div class="save-status" id="save-status"></div>
 </div>
 
 <div class="table-wrap">
@@ -379,11 +373,6 @@ const CONFIG = {
     <tbody id="tbody"></tbody>
     <tfoot id="tfoot"></tfoot>
   </table>
-</div>
-
-<div class="done-wrap">
-  <button id="btn-done" disabled>CONFIRM MY AVAILABILITY</button>
-  <div class="save-status" id="save-status"></div>
 </div>
 
 <p class="refresh-note">Page auto-refreshes every 60 s to show teammates' updates</p>
