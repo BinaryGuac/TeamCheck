@@ -362,8 +362,8 @@
 </header>
 
 <!-- DEV BANNER -->
-<div class="dev-banner" id="devBanner">⚠️ DEV VERSION — connected to TEST Google Sheet — do not share this link</div>
-
+<div class="dev-banner" id="devBanner" style="display:none">⚠️ DEV VERSION — connected to TEST Google Sheet — do not share this link</div>
+  
 <!-- WHO BAR -->
 <div class="who-bar">
   <label for="playerSelect">👤 I AM:</label>
@@ -960,12 +960,11 @@ setInterval(loadData, CONFIG.AUTO_REFRESH_MS);
 (async function init() {
   dbg("═══ INIT START ═══", "section");
   document.getElementById("versionFooter").textContent = CONFIG.VERSION;
-  if (!CONFIG.DEBUG) { const p = document.getElementById("debugPanel"); if (p) p.style.display = "none"; }
   showStatus("⏳ Loading data…");
   if (!CONFIG.DEBUG) {
-  const p = document.getElementById("debugPanel"); if (p) p.style.display = "none";
-  const b = document.getElementById("devBanner");  if (b) b.style.display = "none";
-}
+  const p = document.getElementById("debugPanel"); if (p) p.style.display = "";
+  const b = document.getElementById("devBanner");  if (b) b.style.display = ""; 
+  }
   await loadData();
   dbg("Data loaded and table rendered", "ok");   // sheet is source of truth for dates
   logPageLoad();      // fire after render — awaits IP up to 3s then logs
