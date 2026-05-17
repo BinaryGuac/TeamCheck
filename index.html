@@ -300,7 +300,7 @@
     z-index: 9999;
     font-family: monospace;
     font-size: 0.72rem;
-    display: flex;
+    display: none;
     flex-direction: column;
     transition: max-height 0.3s ease;
   }
@@ -961,9 +961,9 @@ setInterval(loadData, CONFIG.AUTO_REFRESH_MS);
   dbg("═══ INIT START ═══", "section");
   document.getElementById("versionFooter").textContent = CONFIG.VERSION;
   showStatus("⏳ Loading data…");
-  if (!CONFIG.DEBUG) {
-  const p = document.getElementById("debugPanel"); if (p) p.style.display = "";
-  const b = document.getElementById("devBanner");  if (b) b.style.display = ""; 
+  if (CONFIG.DEBUG) {
+    document.getElementById("debugPanel").style.display = "flex";
+    document.getElementById("devBanner").style.display = "";
   }
   await loadData();
   dbg("Data loaded and table rendered", "ok");   // sheet is source of truth for dates
