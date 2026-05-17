@@ -362,7 +362,7 @@
 </header>
 
 <!-- DEV BANNER -->
-<div class="dev-banner">⚠️ DEV VERSION — connected to TEST Google Sheet — do not share this link</div>
+<div class="dev-banner" id="devBanner">⚠️ DEV VERSION — connected to TEST Google Sheet — do not share this link</div>
 
 <!-- WHO BAR -->
 <div class="who-bar">
@@ -443,7 +443,7 @@ const CONFIG = {
   ],
   AUTO_REFRESH_MS: 5 * 60 * 1000,
   DEBUG: false,  // set to false to hide the debug panel
-  VERSION: "TeamCheck V1.1 2026-05-12"
+  VERSION: "TeamCheck V1.1 2026-05-17"
 };
 
 // ═══════════════════════════════════════════════════════════
@@ -956,12 +956,16 @@ setInterval(loadData, CONFIG.AUTO_REFRESH_MS);
 //  3. Log page load (async, does not block display)
 // ═══════════════════════════════════════════════════════════
 // Hide debug panel if CONFIG.DEBUG is false
-if (!CONFIG.DEBUG) { const p = document.getElementById("debugPanel"); if (p) p.style.display = "none"; }
 
 (async function init() {
   dbg("═══ INIT START ═══", "section");
-  document.getElementById("versionFooter").textContent = CONFIG.VERSION + " — DEV";
+  document.getElementById("versionFooter").textContent = CONFIG.VERSION;
+  if (!CONFIG.DEBUG) { const p = document.getElementById("debugPanel"); if (p) p.style.display = "none"; }
   showStatus("⏳ Loading data…");
+  if (!CONFIG.DEBUG) {
+  const p = document.getElementById("debugPanel"); if (p) p.style.display = "none";
+  const b = document.getElementById("devBanner");  if (b) b.style.display = "none";
+}
   await loadData();
   dbg("Data loaded and table rendered", "ok");   // sheet is source of truth for dates
   logPageLoad();      // fire after render — awaits IP up to 3s then logs
